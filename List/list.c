@@ -4,22 +4,26 @@
 
 #include "list.h"
 
-typedef struct List{
+typedef struct List
+{
     void **data;
     int size;
     int buffer;
     int length;
 } List;
 
-List *listCreate(int size){
-    List *pList = (List*) malloc(sizeof(List));
-    if(pList == NULL){
+List *listCreate(int size)
+{
+    List *pList = (List *)malloc(sizeof(List));
+    if (pList == NULL)
+    {
         printf("Memory allocation failed!");
         return NULL;
     }
 
-    pList->data = (void**) malloc(sizeof(void*) * 8);
-    if(pList->data == NULL){
+    pList->data = (void **)malloc(sizeof(void *) * 8);
+    if (pList->data == NULL)
+    {
         printf("Memory allocation failed!");
         return NULL;
     }
@@ -31,8 +35,10 @@ List *listCreate(int size){
     return pList;
 }
 
-void* listGet(List *pList, int index){
-    if(index >= pList->length || index < 0){
+void *listGet(List *pList, int index)
+{
+    if (index >= pList->length || index < 0)
+    {
         printf("Index out of bounds!");
         return NULL;
     }
@@ -40,26 +46,31 @@ void* listGet(List *pList, int index){
     return *(pList->data + index);
 }
 
-void listSet(List *pList,void *value, int index){ 
-    if(index >= pList->length || index < 0){
+void listSet(List *pList, void *value, int index)
+{
+    if (index >= pList->length || index < 0)
+    {
         printf("Index out of bounds!");
         return;
     }
 
-    void* lp = listGet(pList, index);
+    void *lp = listGet(pList, index);
     free(lp);
     lp = NULL;
 
-    void* cp = (void*) malloc(sizeof(void*));
+    void *cp = (void *)malloc(sizeof(void *));
     memcpy(cp, value, pList->size);
 
     lp = cp;
 }
 
-void listAdd(List *pList, void *value){ 
-    if(pList->length == pList->buffer){
-        pList->data = (void**) realloc(pList->data, sizeof(void*) * pList->buffer * 2);
-        if(pList->data == NULL){
+void listAdd(List *pList, void *value)
+{
+    if (pList->length == pList->buffer)
+    {
+        pList->data = (void **)realloc(pList->data, sizeof(void *) * pList->buffer * 2);
+        if (pList->data == NULL)
+        {
             printf("Memory allocation failed!");
             return;
         }
@@ -67,47 +78,54 @@ void listAdd(List *pList, void *value){
         pList->buffer = pList->buffer * 2;
     }
 
-    
-    void* cp = (void*) malloc(sizeof(void*));
+    void *cp = (void *)malloc(sizeof(void *));
     memcpy(cp, value, pList->size);
-    
+
     (pList->data[pList->length]) = cp;
     pList->length++;
 }
 
-void listAddIndex(List *pList, void *value, int index){ 
-    if(index >= pList->length || index < 0){
+void listAddIndex(List *pList, void *value, int index)
+{
+    if (index >= pList->length || index < 0)
+    {
         printf("Index out of bounds!");
         return;
     }
 
     listAdd(pList, listGet(pList, pList->length - 1));
 
-    for(int i = pList->length-2; i > index; i--){
+    for (int i = pList->length - 2; i > index; i--)
+    {
         listSet(pList, listGet(pList, i - 1), i);
     }
 
     listSet(pList, value, index);
 }
 
-void listRemove(List *pList, int index){ 
-    if(index >= pList->length || index < 0){
+void listRemove(List *pList, int index)
+{
+    if (index >= pList->length || index < 0)
+    {
         printf("Index out of bounds!");
         return;
     }
 
-    for(int i = index + 1; i < pList->length; i++){
+    for (int i = index + 1; i < pList->length; i++)
+    {
         listSet(pList, listGet(pList, i), i - 1);
     }
 
-    void* lastP = listGet(pList, pList->length - 1);
+    void *lastP = listGet(pList, pList->length - 1);
     free(lastP);
     lastP = NULL;
     pList->length--;
 }
 
-void listFree(List *pList){
-    for(int i = 0; i < pList->buffer; i++){
+void listFree(List *pList)
+{
+    for (int i = 0; i < pList->buffer; i++)
+    {
         free(*(pList->data + i));
     }
 
@@ -115,10 +133,12 @@ void listFree(List *pList){
     free(pList);
 }
 
-int listLength(List *plist){
+int listLength(List *plist)
+{
     return plist->length;
 }
 
-int listSize(List *pList){
+int listSize(List *pList)
+{
     return pList->size;
 }
