@@ -58,9 +58,9 @@ void linkedListSet(LinkedList *pList, void *value, int index)
         return;
     }
 
-    void *pValue = linkedListGet(pList, index);
-    free(pValue);
-    pValue = NULL;
+    LinkedListNode *pNode = linkedListGetNode(pList, index);
+    free(pNode->value);
+    pNode->value = NULL;
 
     void *cp = (void *)malloc(sizeof(void *));
 
@@ -71,7 +71,7 @@ void linkedListSet(LinkedList *pList, void *value, int index)
     }
     memcpy(cp, value, pList->size);
 
-    pValue = cp;
+    pNode->value = cp;
 }
 
 void linkedListAdd(LinkedList *pList, void *value)
