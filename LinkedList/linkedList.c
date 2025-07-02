@@ -201,6 +201,11 @@ int linkedListSize(LinkedList *pList)
     return pList->size;
 }
 
+LinkedListNode *linkedListGetHead(LinkedList *pList)
+{
+    return pList->head;
+}
+
 void linkedListFree(LinkedList *pList)
 {
     LinkedListNode *pNode = pList->head;

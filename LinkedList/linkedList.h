@@ -9,4 +9,5 @@ void linkedListAddIndex(LinkedList *pList, void *value, int index);
 void linkedListRemove(LinkedList *pList, int index);
 int linkedListLength(LinkedList *pList);
 int linkedListSize(LinkedList *pList);
+LinkedListNode *linkedListGetHead(LinkedList *pList);
 void linkedListFree(LinkedList *pList);
