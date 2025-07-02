@@ -19,7 +19,7 @@ typedef struct LinkedListNode
     void *value;
 } LinkedListNode;
 
-LinkedList *LinkedListCreate(int size)
+LinkedList *linkedListCreate(int size)
 {
     LinkedList *pList = (LinkedList *)malloc(sizeof(LinkedList));
 

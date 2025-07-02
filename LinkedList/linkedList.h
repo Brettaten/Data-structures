@@ -1,7 +1,7 @@
 typedef struct LinkedList LinkedList;
 typedef struct LinkedListNode LinkedListNode;
 
-LinkedList *LinkedListCreate(int size);
+LinkedList *linkedListCreate(int size);
 void *linkedListGet(LinkedList *pList, int index);
 void linkedListSet(LinkedList *pList, void *value, int index);
 void linkedListAdd(LinkedList *pList, void *value);
