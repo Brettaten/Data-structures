@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "linkedList.h"
@@ -54,7 +55,7 @@ void linkedListSet(LinkedList *pList, void *value, int index)
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return NULL;
+        return;
     }
 
     void *pValue = linkedListGet(pList, index);
@@ -66,7 +67,7 @@ void linkedListSet(LinkedList *pList, void *value, int index)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return NULL;
+        return;
     }
     memcpy(cp, value, pList->size);
 
@@ -79,7 +80,7 @@ void linkedListAdd(LinkedList *pList, void *value)
     if (pNodeNew == NULL)
     {
         printf("Memory allocation failed!");
-        return NULL;
+        return;
     }
 
     void *cp = (void *)malloc(sizeof(void *));
@@ -87,7 +88,7 @@ void linkedListAdd(LinkedList *pList, void *value)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return NULL;
+        return;
     }
     memcpy(cp, value, pList->size);
 
@@ -113,14 +114,14 @@ void linkedListAddIndex(LinkedList *pList, void *value, int index)
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return NULL;
+        return;
     }
 
     LinkedListNode *pNodeNew = (LinkedListNode *)malloc(sizeof(LinkedListNode));
     if (pNodeNew == NULL)
     {
         printf("Memory allocation failed!");
-        return NULL;
+        return;
     }
 
     void *cp = (void *)malloc(sizeof(void *));
@@ -128,7 +129,7 @@ void linkedListAddIndex(LinkedList *pList, void *value, int index)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return NULL;
+        return;
     }
     memcpy(cp, value, pList->size);
 
@@ -163,7 +164,7 @@ void linkedListRemove(LinkedList *pList, int index)
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return NULL;
+        return;
     }
 
     LinkedListNode *pNodeP;
