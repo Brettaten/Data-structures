@@ -1,6 +1,6 @@
 typedef struct List List;
 
-List *listCreate();
+List *listCreate(int size);
 void *listGet(List *pList, int index);
 void listSet(List *pList, void *value, int index);
 void listAdd(List *pList, void *value);
