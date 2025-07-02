@@ -199,7 +199,7 @@ int linkedListSize(LinkedList *pList)
     return pList->size;
 }
 
-void listFree(LinkedList *pList)
+void linkedListFree(LinkedList *pList)
 {
     LinkedListNode *pNode = pList->head;
 
