@@ -149,7 +149,7 @@ void linkedListAddIndex(LinkedList *pList, void *value, int index)
     }
     else
     {
-        pNodeP = linkedListGet(pList, index - 1);
+        pNodeP = linkedListGetNode(pList, index - 1);
         pNodeC = pNodeP->next;
 
         pNodeP->next = pNodeNew;
@@ -184,6 +184,7 @@ void linkedListRemove(LinkedList *pList, int index)
         pNodeC = pNodeP->next->next;
 
         freeNode(pNodeP->next);
+        pNodeP->next = NULL;
         pNodeP->next = pNodeC;
     }
 
@@ -242,6 +243,8 @@ LinkedListNode *linkedListGetNode(LinkedList *pList, int index)
 void freeNode(LinkedListNode *pNode)
 {
     free(pNode->value);
+    pNode->value = NULL;
+    pNode->next = NULL;
     free(pNode);
 
     pNode = NULL;
