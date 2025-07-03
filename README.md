@@ -4,7 +4,7 @@
 
 Just some basic C datastructures, including:
 - dynamic list (array based)
-- linked list
+- singly linked list
 - queue
 - stack
 - hashmap
