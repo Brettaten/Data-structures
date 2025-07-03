@@ -118,6 +118,12 @@ void listAddIndex(List *pList, void *value, int index)
 
 void listRemove(List *pList, int index)
 {
+    if (pList->length == 0)
+    {
+        printf("List is empty!");
+        return;
+    }
+
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");

@@ -165,6 +165,12 @@ void singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 
 void singlyLinkedListRemove(SinglyLinkedList *pList, int index)
 {
+    if (pList->length == 0)
+    {
+        printf("List is empty!");
+        return;
+    }
+
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
