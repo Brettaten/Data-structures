@@ -69,20 +69,13 @@ void singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
         printf("Memory allocation failed!");
         return;
     }
-    memcpy(cp, value, pList->size);
+    memcpy_s(cp, sizeof(void *), value, pList->size);
 
     pNode->value = cp;
 }
 
 void singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
 {
-    SinglyLinkedListNode *pNodeNew = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
-    if (pNodeNew == NULL)
-    {
-        printf("Memory allocation failed!");
-        return;
-    }
-
     void *cp = (void *)malloc(sizeof(void *));
 
     if (cp == NULL)
@@ -90,7 +83,16 @@ void singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
         printf("Memory allocation failed!");
         return;
     }
-    memcpy(cp, value, pList->size);
+
+    memcpy_s(cp, sizeof(void *), value, pList->size);
+
+    SinglyLinkedListNode *pNodeNew = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
+    if (pNodeNew == NULL)
+    {
+        free(cp);
+        printf("Memory allocation failed!");
+        return;
+    }
 
     pNodeNew->value = cp;
     pNodeNew->next = NULL;
@@ -117,13 +119,6 @@ void singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
         return;
     }
 
-    SinglyLinkedListNode *pNodeNew = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
-    if (pNodeNew == NULL)
-    {
-        printf("Memory allocation failed!");
-        return;
-    }
-
     void *cp = (void *)malloc(sizeof(void *));
 
     if (cp == NULL)
@@ -131,7 +126,16 @@ void singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
         printf("Memory allocation failed!");
         return;
     }
-    memcpy(cp, value, pList->size);
+
+    memcpy_s(cp, sizeof(void *), value, pList->size);
+
+    SinglyLinkedListNode *pNodeNew = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
+    if (pNodeNew == NULL)
+    {
+        free(cp);
+        printf("Memory allocation failed!");
+        return;
+    }
 
     pNodeNew->value = cp;
     pNodeNew->next = NULL;
