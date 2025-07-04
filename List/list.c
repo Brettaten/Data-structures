@@ -55,14 +55,14 @@ void listSet(List *pList, void *value, int index)
         return;
     }
 
-    void *cp = (void *)malloc(sizeof(void *));
+    void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
         return;
     }
-    memcpy_s(cp, sizeof(void *), value, pList->size);
+    memcpy_s(cp, pList->size, value, pList->size);
 
     void *lp = listGet(pList, index);
     free(lp);
@@ -85,14 +85,14 @@ void listAdd(List *pList, void *value)
         pList->buffer = pList->buffer * 2;
     }
 
-    void *cp = (void *)malloc(sizeof(void *));
+    void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
         return;
     }
-    memcpy_s(cp, sizeof(void *), value, pList->size);
+    memcpy_s(cp, pList->size, value, pList->size);
 
     (pList->data[pList->length]) = cp;
     pList->length++;
@@ -143,7 +143,7 @@ void listRemove(List *pList, int index)
 
 void listFree(List *pList)
 {
-    for (int i = 0; i < pList->buffer; i++)
+    for (int i = 0; i < pList->length; i++)
     {
         free(*(pList->data + i));
     }

@@ -65,7 +65,7 @@ void doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
     free(pNode->value);
     pNode->value = NULL;
 
-    void *cp = (void *)malloc(sizeof(void *));
+    void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
@@ -73,14 +73,14 @@ void doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
         return;
     }
 
-    memcpy_s(cp, sizeof(void *), value, pList->size);
+    memcpy_s(cp, pList->size, value, pList->size);
 
     pNode->value = cp;
 }
 
 void doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
 {
-    void *cp = (void *)malloc(sizeof(void *));
+    void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
@@ -88,7 +88,7 @@ void doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
         return;
     }
 
-    memcpy_s(cp, sizeof(void *), value, pList->size);
+    memcpy_s(cp, pList->size, value, pList->size);
 
     DoublyLinkedListNode *pNodeNew = (DoublyLinkedListNode *)malloc(sizeof(DoublyLinkedListNode));
     if (pNodeNew == NULL)
@@ -128,7 +128,7 @@ void doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
         return;
     }
 
-    void *cp = (void *)malloc(sizeof(void *));
+    void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
@@ -136,7 +136,7 @@ void doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
         return;
     }
 
-    memcpy_s(cp, sizeof(void *), value, pList->size);
+    memcpy_s(cp, pList->size, value, pList->size);
 
     DoublyLinkedListNode *pNodeNew = (DoublyLinkedListNode *)malloc(sizeof(DoublyLinkedListNode));
     if (pNodeNew == NULL)
