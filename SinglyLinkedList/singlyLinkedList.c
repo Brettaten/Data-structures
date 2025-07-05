@@ -50,15 +50,21 @@ void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
     return pNode->value;
 }
 
-void singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
+int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
 {
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
     SinglyLinkedListNode *pNode = singlyLinkedListGetNode(pList, index);
+
+    if (pNode == NULL)
+    {
+        return -1;
+    }
+
     free(pNode->value);
     pNode->value = NULL;
 
@@ -67,21 +73,23 @@ void singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
     memcpy_s(cp, pList->size, value, pList->size);
 
     pNode->value = cp;
+
+    return 0;
 }
 
-void singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
+int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
 {
     void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     memcpy_s(cp, pList->size, value, pList->size);
@@ -91,7 +99,7 @@ void singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
     {
         free(cp);
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     pNodeNew->value = cp;
@@ -105,18 +113,25 @@ void singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
     {
         SinglyLinkedListNode *node = singlyLinkedListGetNode(pList, pList->length - 1);
 
+        if (node == NULL)
+        {
+            return -1;
+        }
+
         node->next = pNodeNew;
     }
 
     pList->length++;
+
+    return 0;
 }
 
-void singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
+int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 {
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
     void *cp = (void *)malloc(pList->size);
@@ -124,7 +139,7 @@ void singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     memcpy_s(cp, pList->size, value, pList->size);
@@ -134,7 +149,7 @@ void singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
     {
         free(cp);
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     pNodeNew->value = cp;
@@ -154,6 +169,12 @@ void singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
     else
     {
         pNodeP = singlyLinkedListGetNode(pList, index - 1);
+
+        if (pNodeP == NULL)
+        {
+            return -1;
+        }
+
         pNodeC = pNodeP->next;
 
         pNodeP->next = pNodeNew;
@@ -161,20 +182,22 @@ void singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
     }
 
     pList->length++;
+
+    return 0;
 }
 
-void singlyLinkedListRemove(SinglyLinkedList *pList, int index)
+int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
 {
     if (pList->length == 0)
     {
         printf("List is empty!");
-        return;
+        return -1;
     }
 
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
     SinglyLinkedListNode *pNodeP;
@@ -191,6 +214,12 @@ void singlyLinkedListRemove(SinglyLinkedList *pList, int index)
     else
     {
         pNodeP = singlyLinkedListGetNode(pList, index - 1);
+
+        if (pNodeP == NULL)
+        {
+            return -1;
+        }
+
         pNodeC = pNodeP->next->next;
 
         freeNode(pNodeP->next);
@@ -199,6 +228,8 @@ void singlyLinkedListRemove(SinglyLinkedList *pList, int index)
     }
 
     pList->length--;
+
+    return 0;
 }
 
 int singlyLinkedListLength(SinglyLinkedList *pList)

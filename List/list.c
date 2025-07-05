@@ -47,12 +47,12 @@ void *listGet(List *pList, int index)
     return *(pList->data + index);
 }
 
-void listSet(List *pList, void *value, int index)
+int listSet(List *pList, void *value, int index)
 {
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
     void *cp = (void *)malloc(pList->size);
@@ -60,18 +60,26 @@ void listSet(List *pList, void *value, int index)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
     memcpy_s(cp, pList->size, value, pList->size);
 
     void *lp = listGet(pList, index);
+
+    if (lp == NULL)
+    {
+        return -1;
+    }
+
     free(lp);
     lp = NULL;
 
     *(pList->data + index) = cp;
+
+    return 0;
 }
 
-void listAdd(List *pList, void *value)
+int listAdd(List *pList, void *value)
 {
     if (pList->length == pList->buffer)
     {
@@ -79,7 +87,7 @@ void listAdd(List *pList, void *value)
         if (pList->data == NULL)
         {
             printf("Memory allocation failed!");
-            return;
+            return -1;
         }
 
         pList->buffer = pList->buffer * 2;
@@ -90,55 +98,110 @@ void listAdd(List *pList, void *value)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
     memcpy_s(cp, pList->size, value, pList->size);
 
     (pList->data[pList->length]) = cp;
     pList->length++;
+
+    return 0;
 }
 
-void listAddIndex(List *pList, void *value, int index)
+int listAddIndex(List *pList, void *value, int index)
 {
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
-    listAdd(pList, listGet(pList, pList->length - 1));
+    void *p1 = listGet(pList, pList->length - 1);
+
+    if (p1 == NULL)
+    {
+        return -1;
+    }
+
+    int st1 = listAdd(pList, p1);
+
+    if (st1 == -1)
+    {
+        return -1;
+    }
 
     for (int i = pList->length - 2; i > index; i--)
     {
-        listSet(pList, listGet(pList, i - 1), i);
+        void *p2 = listGet(pList, i - 1);
+
+        if (p2 == NULL)
+        {
+            return -1;
+        }
+
+        int st2 = listSet(pList, p2, i);
+
+        if (st2 == -1)
+        {
+            return -1;
+        }
     }
 
-    listSet(pList, value, index);
+    int st3 = listSet(pList, value, index);
+
+    if (st3 == -1)
+    {
+        return -1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
-void listRemove(List *pList, int index)
+int listRemove(List *pList, int index)
 {
     if (pList->length == 0)
     {
         printf("List is empty!");
-        return;
+        return -1;
     }
 
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
     for (int i = index + 1; i < pList->length; i++)
     {
-        listSet(pList, listGet(pList, i), i - 1);
+        void *p1 = listGet(pList, i);
+
+        if (p1 == NULL)
+        {
+            return -1;
+        }
+
+        int st1 = listSet(pList, p1, i - 1);
+
+        if (st1 == -1)
+        {
+            return -1;
+        }
     }
 
     void *lastP = listGet(pList, pList->length - 1);
+
+    if (lastP == NULL)
+    {
+        return -1;
+    }
+
     free(lastP);
     lastP = NULL;
     pList->length--;
+
+    return 0;
 }
 
 void listFree(List *pList)

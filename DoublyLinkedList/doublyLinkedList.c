@@ -53,15 +53,21 @@ void *doublyLinkedListGet(DoublyLinkedList *pList, int index)
     return pNode->value;
 }
 
-void doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
+int doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
 {
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
     DoublyLinkedListNode *pNode = doublyLinkedListGetNode(pList, index);
+
+    if (pNode == NULL)
+    {
+        return -1;
+    }
+
     free(pNode->value);
     pNode->value = NULL;
 
@@ -70,22 +76,24 @@ void doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     memcpy_s(cp, pList->size, value, pList->size);
 
     pNode->value = cp;
+
+    return 0;
 }
 
-void doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
+int doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
 {
     void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     memcpy_s(cp, pList->size, value, pList->size);
@@ -95,7 +103,7 @@ void doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
     {
         free(cp);
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     pNodeNew->value = cp;
@@ -118,14 +126,16 @@ void doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
     }
 
     pList->length++;
+
+    return 0;
 }
 
-void doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
+int doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
 {
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
     void *cp = (void *)malloc(pList->size);
@@ -133,7 +143,7 @@ void doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
     if (cp == NULL)
     {
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     memcpy_s(cp, pList->size, value, pList->size);
@@ -143,7 +153,7 @@ void doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
     {
         free(cp);
         printf("Memory allocation failed!");
-        return;
+        return -1;
     }
 
     pNodeNew->value = cp;
@@ -169,6 +179,12 @@ void doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
     else
     {
         pNodeP = doublyLinkedListGetNode(pList, index - 1);
+
+        if (pNodeP == NULL)
+        {
+            return -1;
+        }
+
         pNodeC = pNodeP->next;
 
         pNodeP->next = pNodeNew;
@@ -178,20 +194,22 @@ void doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
     }
 
     pList->length++;
+
+    return 0;
 }
 
-void doublyLinkedListRemove(DoublyLinkedList *pList, int index)
+int doublyLinkedListRemove(DoublyLinkedList *pList, int index)
 {
     if (pList->length == 0)
     {
         printf("List is empty!");
-        return;
+        return -1;
     }
 
     if (index >= pList->length || index < 0)
     {
         printf("Index out of bounds!");
-        return;
+        return -1;
     }
 
     DoublyLinkedListNode *pNodeP;
@@ -217,6 +235,12 @@ void doublyLinkedListRemove(DoublyLinkedList *pList, int index)
     else
     {
         pNodeP = doublyLinkedListGetNode(pList, index - 1);
+
+        if (pNodeP == NULL)
+        {
+            return -1;
+        }
+
         pNodeC = pNodeP->next->next;
 
         freeNode(pNodeP->next);
@@ -234,6 +258,8 @@ void doublyLinkedListRemove(DoublyLinkedList *pList, int index)
     }
 
     pList->length--;
+
+    return 0;
 }
 
 int doublyLinkedListLength(DoublyLinkedList *pList)
