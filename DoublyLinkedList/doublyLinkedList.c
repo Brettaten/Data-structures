@@ -109,7 +109,7 @@ void doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
     }
     else
     {
-        DoublyLinkedListNode *node = doublyLinkedListGetNode(pList, pList->length - 1);
+        DoublyLinkedListNode *node = pList->tail;
 
         node->next = pNodeNew;
         pNodeNew->prev = node;
