@@ -182,6 +182,7 @@ int doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
 
         if (pNodeP == NULL)
         {
+            free(pNodeNew);
             return -1;
         }
 

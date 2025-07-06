@@ -115,6 +115,7 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
 
         if (node == NULL)
         {
+            free(pNodeNew);
             return -1;
         }
 
@@ -172,6 +173,7 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 
         if (pNodeP == NULL)
         {
+            free(pNodeNew);
             return -1;
         }
 
