@@ -174,6 +174,10 @@ int listRemove(List *pList, int index)
         void *p1 = *(pList->data + i);
 
         int st1 = listSet(pList, p1, i - 1);
+
+        if(st1 == -1){
+            return -1;
+        }
     }
 
     void *lastP = *(pList->data + pList->length - 1);
