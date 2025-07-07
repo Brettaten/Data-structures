@@ -50,7 +50,17 @@ void *doublyLinkedListGet(DoublyLinkedList *pList, int index)
 
     DoublyLinkedListNode *pNode = doublyLinkedListGetNode(pList, index);
 
-    return pNode->value;
+    void *cp = (void *)malloc(pList->size);
+
+    if (cp == NULL)
+    {
+        printf("Memory allocation failed!");
+        return NULL;
+    }
+
+    memcpy_s(cp, pList->size, pNode->value, pList->size);
+
+    return cp;
 }
 
 int doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)

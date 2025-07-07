@@ -44,7 +44,18 @@ void *listGet(List *pList, int index)
         return NULL;
     }
 
-    return *(pList->data + index);
+    void *value = *(pList->data + index);
+    void *cp = (void *)malloc(pList->size);
+
+    if (cp == NULL)
+    {
+        printf("Memory allocation failed!");
+        return NULL;
+    }
+
+    memcpy_s(cp, pList->size, value, pList->size);
+
+    return cp;
 }
 
 int listSet(List *pList, void *value, int index)
@@ -64,12 +75,7 @@ int listSet(List *pList, void *value, int index)
     }
     memcpy_s(cp, pList->size, value, pList->size);
 
-    void *lp = listGet(pList, index);
-
-    if (lp == NULL)
-    {
-        return -1;
-    }
+    void *lp = *(pList->data + index);
 
     free(lp);
     lp = NULL;
@@ -116,12 +122,7 @@ int listAddIndex(List *pList, void *value, int index)
         return -1;
     }
 
-    void *p1 = listGet(pList, pList->length - 1);
-
-    if (p1 == NULL)
-    {
-        return -1;
-    }
+    void *p1 = *(pList->data + pList->length - 1);
 
     int st1 = listAdd(pList, p1);
 
@@ -132,12 +133,7 @@ int listAddIndex(List *pList, void *value, int index)
 
     for (int i = pList->length - 2; i > index; i--)
     {
-        void *p2 = listGet(pList, i - 1);
-
-        if (p2 == NULL)
-        {
-            return -1;
-        }
+        void *p2 = *(pList->data + i - 1);
 
         int st2 = listSet(pList, p2, i);
 
@@ -175,27 +171,12 @@ int listRemove(List *pList, int index)
 
     for (int i = index + 1; i < pList->length; i++)
     {
-        void *p1 = listGet(pList, i);
-
-        if (p1 == NULL)
-        {
-            return -1;
-        }
+        void *p1 = *(pList->data + i);
 
         int st1 = listSet(pList, p1, i - 1);
-
-        if (st1 == -1)
-        {
-            return -1;
-        }
     }
 
-    void *lastP = listGet(pList, pList->length - 1);
-
-    if (lastP == NULL)
-    {
-        return -1;
-    }
+    void *lastP = *(pList->data + pList->length - 1);
 
     free(lastP);
     lastP = NULL;

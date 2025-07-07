@@ -47,7 +47,17 @@ void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
 
     SinglyLinkedListNode *pNode = singlyLinkedListGetNode(pList, index);
 
-    return pNode->value;
+    void *cp = (void *)malloc(pList->size);
+
+    if (cp == NULL)
+    {
+        printf("Memory allocation failed!");
+        return NULL;
+    }
+
+    memcpy_s(cp, pList->size, pNode->value, pList->size);
+
+    return cp;
 }
 
 int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
