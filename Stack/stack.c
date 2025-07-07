@@ -1,45 +1,85 @@
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "stack.h"
-#include "list.h";
+#include "../DoublyLinkedList/doublyLinkedList.h"
 
-typedef struct Stack{
-    List *list;
+typedef struct Stack
+{
+    DoublyLinkedList *list;
+    int size;
     int length;
 } Stack;
 
-Stack *stackCreate()
+Stack *stackCreate(int size)
 {
-    Stack *pStack = (Stack*) malloc(sizeof(Stack));
+    Stack *pStack = (Stack *)malloc(sizeof(Stack));
 
-    if(pStack == NULL){
+    if (pStack == NULL)
+    {
         printf("Memory allocation failed!");
         return NULL;
     }
 
-    List *pList = listCreate();
+    DoublyLinkedList *pList = doublyLinkedListCreate(size);
     pStack->list = pList;
+    pStack->size = size;
     pStack->length = 0;
 
     return pStack;
 }
 
-void stackPush(Stack *pStack, void *value)
+int stackPush(Stack *pStack, void *value)
 {
-    listAdd(pStack->list, value);
+    int st1 = doublyLinkedListAdd(pStack->list, value);
+
+    if (st1 == -1)
+    {
+        return -1;
+    }
+
     pStack->length++;
+
+    return 0;
 }
 
 void *stackPop(Stack *pStack)
 {
-    if(listLength(pStack->list) == 0){
+    void *value = stackPeek(pStack);
+
+    if (value == NULL)
+    {
         return NULL;
     }
 
-    void* value = listGet(pStack->list, listLength(pStack->length)-1);
-    listSet(pStack->list, NULL, listLength(pStack->length)-1);
-    listRemove(pStack->list, listLength(pStack->length)-1);
+    int st1 = doublyLinkedListRemove(pStack->list, pStack->length - 1);
+
+    if (st1 == -1)
+    {
+        free(value);
+        return NULL;
+    }
+
     pStack->length--;
+
+    return value;
+}
+
+void *stackPeek(Stack *pStack)
+{
+    if (pStack->list == 0)
+    {
+        printf("List is empty!");
+        return NULL;
+    }
+
+    void *value = doublyLinkedListGet(pStack->list, pStack->length - 1);
+
+    if (value == NULL)
+    {
+        return NULL;
+    }
 
     return value;
 }
@@ -49,6 +89,14 @@ int stackLength(Stack *pStack)
     return pStack->length;
 }
 
-void stackFree(Stack * pStack)
+int stackSize(Stack *pStack)
 {
+    return pStack->size;
+}
+
+void stackFree(Stack *pStack)
+{
+    doublyLinkedListFree(pStack->list);
+
+    free(pStack);
 }
