@@ -1,45 +1,84 @@
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "queue.h"
-#include "list.h";
+#include "../DoublyLinkedList/doublyLinkedList.h"
 
-typedef struct Queue{
-    List *list;
+typedef struct Queue
+{
+    DoublyLinkedList *list;
+    int size;
     int length;
 } Queue;
 
-Queue *queueCreate()
+Queue *queueCreate(int size)
 {
-    Queue *pQueue = (Queue*) malloc(sizeof(Queue));
+    Queue *pQueue = (Queue *)malloc(sizeof(Queue));
 
-    if(pQueue == NULL){
+    if (pQueue == NULL)
+    {
         printf("Memory allocation failed!");
         return NULL;
     }
 
-    List *pList = listCreate();
+    DoublyLinkedList *pList = doublyLinkedListCreate(size);
     pQueue->list = pList;
+    pQueue->size = size;
     pQueue->length = 0;
 
     return pQueue;
 }
 
-void queuePush(Queue *pQueue, void *value)
+int queuePush(Queue *pQueue, void *value)
 {
-    listAdd(pQueue->list, value);
+    int st1 = doublyLinkedListAdd(pQueue->list, value);
+
+    if (st1 == -1)
+    {
+        return -1;
+    }
+
     pQueue->length++;
+
+    return 0;
 }
 
 void *queuePop(Queue *pQueue)
 {
-    if(listLength(pQueue->list) == 0){
+    void *value = queuePeek(pQueue);
+
+    if (value == NULL)
+    {
         return NULL;
     }
 
-    void* value = listGet(pQueue->list, 0);
-    listSet(pQueue->list, NULL, 0);
-    listRemove(pQueue->list, 0);
+    int st1 = doublyLinkedListRemove(pQueue->list, 0);
+
+    if (st1 == -1)
+    {
+        return NULL;
+    }
+
     pQueue->length--;
+
+    return value;
+}
+
+void *queuePeek(Queue *pQueue)
+{
+    if (pQueue->list == 0)
+    {
+        printf("List is empty!");
+        return NULL;
+    }
+
+    void *value = doublyLinkedListGet(pQueue->list, 0);
+
+    if (value == NULL)
+    {
+        return NULL;
+    }
 
     return value;
 }
@@ -49,6 +88,14 @@ int queueLength(Queue *pQueue)
     return pQueue->length;
 }
 
+int queueSize(Queue *pQueue)
+{
+    return doublyLinkedListSize(pQueue->list);
+}
+
 void queueFree(Queue *pQueue)
 {
+    doublyLinkedListFree(pQueue->list);
+
+    free(pQueue);
 }
