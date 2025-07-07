@@ -57,6 +57,7 @@ void *queuePop(Queue *pQueue)
 
     if (st1 == -1)
     {
+        free(value);
         return NULL;
     }
 
