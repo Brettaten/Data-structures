@@ -9,5 +9,4 @@ Just some basic C datastructures, including:
 - queue
 - stack
 - hashmap
-- binary tree
 - binary search tree (self-balancing, red-black tree)
