@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "list.h"
 
@@ -11,6 +12,8 @@ typedef struct List
     int buffer;
     int length;
 } List;
+
+bool isIndexInBounds(List *pList, int index);
 
 List *listCreate(int size)
 {
@@ -155,6 +158,20 @@ int listAddIndex(List *pList, void *value, int index)
     }
 }
 
+int listSwap(List *pList, int index1, int index2)
+{
+    if (pList == NULL || !isIndexInBounds(pList, index1) || !isIndexInBounds(pList, index2))
+    {
+        return -1;
+    }
+
+    void *temp = pList->data[index1];
+    pList->data[index1] = pList->data[index2];
+    pList->data[index2] = temp;
+
+    return 0;
+}
+
 int listRemove(List *pList, int index)
 {
     if (pList->length == 0)
@@ -175,7 +192,8 @@ int listRemove(List *pList, int index)
 
         int st1 = listSet(pList, p1, i - 1);
 
-        if(st1 == -1){
+        if (st1 == -1)
+        {
             return -1;
         }
     }
@@ -208,4 +226,18 @@ int listLength(List *plist)
 int listSize(List *pList)
 {
     return pList->size;
+}
+
+bool isIndexInBounds(List *pList, int index)
+{
+    if (pList == NULL)
+    {
+        return false;
+    }
+
+    if (index < 0 || index >= pList->length)
+    {
+        return false;
+    }
+    return true;
 }
