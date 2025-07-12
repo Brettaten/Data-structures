@@ -15,10 +15,10 @@ typedef struct List
 
 /**
  * Function used determine whether an index is in bounds
- * 
+ *
  * @param pList pointer to the list
  * @param index position in the list
- * 
+ *
  * @return true or false
  */
 bool isIndexInBounds(List *pList, int index);
@@ -49,13 +49,19 @@ List *listCreate(int size)
 
 void *listGet(List *pList, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | listGet \n");
+        return NULL;
+    }
+
+    if (!isIndexInBounds(pList, index))
     {
         printf("[INFO] : Index out of bounds | listGet \n");
         return NULL;
     }
 
-    void *value = *(pList->data + index);
+    void *value = pList->data[index];
     void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
@@ -71,7 +77,19 @@ void *listGet(List *pList, int index)
 
 int listSet(List *pList, void *value, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | listSet \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | listSet \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds(pList, index))
     {
         printf("[INFO] : Index out of bounds | listSet \n");
         return -1;
@@ -86,18 +104,30 @@ int listSet(List *pList, void *value, int index)
     }
     memcpy_s(cp, pList->size, value, pList->size);
 
-    void *lp = *(pList->data + index);
+    void *lp = pList->data[index];
 
     free(lp);
     lp = NULL;
 
-    *(pList->data + index) = cp;
+    pList->data[index] = cp;
 
     return 0;
 }
 
 int listAdd(List *pList, void *value)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | listAdd \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | listAdd \n");
+        return -1;
+    }
+
     if (pList->length == pList->buffer)
     {
         pList->data = (void **)realloc(pList->data, sizeof(void *) * pList->buffer * 2);
@@ -119,7 +149,7 @@ int listAdd(List *pList, void *value)
     }
     memcpy_s(cp, pList->size, value, pList->size);
 
-    (pList->data[pList->length]) = cp;
+    pList->data[pList->length] = cp;
     pList->length++;
 
     return 0;
@@ -127,18 +157,31 @@ int listAdd(List *pList, void *value)
 
 int listAddIndex(List *pList, void *value, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | listAddIndex \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | listAddIndex \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds(pList, index))
     {
         printf("[INFO] : Index out of bounds | listAddIndex \n");
         return -1;
     }
 
-    void *p1 = *(pList->data + pList->length - 1);
+    void *p1 = pList->data[pList->length - 1];
 
     int st1 = listAdd(pList, p1);
 
     if (st1 == -1)
     {
+        printf("[ERROR] : Function listAdd failed | listAddIndex \n");
         return -1;
     }
 
@@ -148,6 +191,7 @@ int listAddIndex(List *pList, void *value, int index)
 
         if (st2 == -1)
         {
+            printf("[ERROR] : Function listSwap failed | listAddIndex \n");
             return -1;
         }
     }
@@ -156,6 +200,7 @@ int listAddIndex(List *pList, void *value, int index)
 
     if (st3 == -1)
     {
+        printf("[ERROR] : Function listSet failed | listAddIndex \n");
         return -1;
     }
     else
@@ -166,8 +211,15 @@ int listAddIndex(List *pList, void *value, int index)
 
 int listSwap(List *pList, int index1, int index2)
 {
-    if (pList == NULL || !isIndexInBounds(pList, index1) || !isIndexInBounds(pList, index2))
+    if (pList == NULL)
     {
+        printf("[WARN] : Pointer to list is NULL | listSwap \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds(pList, index1) || !isIndexInBounds(pList, index2))
+    {
+        printf("[INFO] : Index out of bounds | listSwap \n");
         return -1;
     }
 
@@ -180,15 +232,21 @@ int listSwap(List *pList, int index1, int index2)
 
 int listRemove(List *pList, int index)
 {
-    if (pList->length == 0)
+    if (pList == NULL)
     {
-        printf("[INFO] : List is empty | listRemove");
+        printf("[WARN] : Pointer to list is NULL | listRemove \n");
         return -1;
     }
 
-    if (index >= pList->length || index < 0)
+    if (!isIndexInBounds(pList, index))
     {
         printf("[INFO] : Index out of bounds | listRemove \n");
+        return -1;
+    }
+
+    if (pList->length == 0)
+    {
+        printf("[INFO] : List is empty | listRemove");
         return -1;
     }
 
@@ -198,11 +256,12 @@ int listRemove(List *pList, int index)
 
         if (st1 == -1)
         {
+            printf("[ERROR] : Function listSwap failed | listRemove \n");
             return -1;
         }
     }
 
-    void *lastP = *(pList->data + pList->length - 1);
+    void *lastP = pList->data[pList->length - 1];
 
     free(lastP);
     lastP = NULL;
@@ -213,27 +272,51 @@ int listRemove(List *pList, int index)
 
 void listFree(List *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[INFO] : Pointer to list is NULL | listFree \n");
+        return;
+    }
+
     for (int i = 0; i < pList->length; i++)
     {
-        free(*(pList->data + i));
+        free(pList->data[i]);
     }
 
     free(pList->data);
     free(pList);
 }
 
-int listLength(List *plist)
+int listLength(List *pList)
 {
-    return plist->length;
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | listLength \n");
+        return -1;
+    }
+
+    return pList->length;
 }
 
 int listSize(List *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[ERROR] : Pointer to list is NULL | listSize \n");
+        return -1;
+    }
+
     return pList->size;
 }
 
 bool isIndexInBounds(List *pList, int index)
 {
+    if (pList == NULL)
+    {
+        printf("[ERROR] : Pointer to list is NULL | isIndexInBounds \n");
+        return -1;
+    }
+
     if (pList == NULL)
     {
         return false;
