@@ -188,9 +188,7 @@ int listRemove(List *pList, int index)
 
     for (int i = index + 1; i < pList->length; i++)
     {
-        void *p1 = *(pList->data + i);
-
-        int st1 = listSet(pList, p1, i - 1);
+        int st1 = listSwap(pList, i, i - 1);
 
         if (st1 == -1)
         {
