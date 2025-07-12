@@ -28,7 +28,7 @@ List *listCreate(int size)
     List *pList = (List *)malloc(sizeof(List));
     if (pList == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | listCreate \n");
         return NULL;
     }
 
@@ -36,7 +36,7 @@ List *listCreate(int size)
     if (pList->data == NULL)
     {
         free(pList);
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | listCreate \n");
         return NULL;
     }
 
@@ -51,7 +51,7 @@ void *listGet(List *pList, int index)
 {
     if (index >= pList->length || index < 0)
     {
-        printf("Index out of bounds!");
+        printf("[INFO] : Index out of bounds | listGet \n");
         return NULL;
     }
 
@@ -60,7 +60,7 @@ void *listGet(List *pList, int index)
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | listGet \n");
         return NULL;
     }
 
@@ -73,7 +73,7 @@ int listSet(List *pList, void *value, int index)
 {
     if (index >= pList->length || index < 0)
     {
-        printf("Index out of bounds!");
+        printf("[INFO] : Index out of bounds | listSet \n");
         return -1;
     }
 
@@ -81,7 +81,7 @@ int listSet(List *pList, void *value, int index)
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | listSet \n");
         return -1;
     }
     memcpy_s(cp, pList->size, value, pList->size);
@@ -103,7 +103,7 @@ int listAdd(List *pList, void *value)
         pList->data = (void **)realloc(pList->data, sizeof(void *) * pList->buffer * 2);
         if (pList->data == NULL)
         {
-            printf("Memory allocation failed!");
+            printf("[ERROR] : Memory allocation failed | listAdd \n");
             return -1;
         }
 
@@ -114,7 +114,7 @@ int listAdd(List *pList, void *value)
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | listAdd \n");
         return -1;
     }
     memcpy_s(cp, pList->size, value, pList->size);
@@ -129,7 +129,7 @@ int listAddIndex(List *pList, void *value, int index)
 {
     if (index >= pList->length || index < 0)
     {
-        printf("Index out of bounds!");
+        printf("[INFO] : Index out of bounds | listAddIndex \n");
         return -1;
     }
 
@@ -182,13 +182,13 @@ int listRemove(List *pList, int index)
 {
     if (pList->length == 0)
     {
-        printf("List is empty!");
+        printf("[INFO] : List is empty | listRemove");
         return -1;
     }
 
     if (index >= pList->length || index < 0)
     {
-        printf("Index out of bounds!");
+        printf("[INFO] : Index out of bounds | listRemove \n");
         return -1;
     }
 
