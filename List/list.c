@@ -13,6 +13,14 @@ typedef struct List
     int length;
 } List;
 
+/**
+ * Function used determine whether an index is in bounds
+ * 
+ * @param pList pointer to the list
+ * @param index position in the list
+ * 
+ * @return true or false
+ */
 bool isIndexInBounds(List *pList, int index);
 
 List *listCreate(int size)
@@ -136,9 +144,7 @@ int listAddIndex(List *pList, void *value, int index)
 
     for (int i = pList->length - 2; i > index; i--)
     {
-        void *p2 = *(pList->data + i - 1);
-
-        int st2 = listSet(pList, p2, i);
+        int st2 = listSwap(pList, i - 1, i);
 
         if (st2 == -1)
         {
