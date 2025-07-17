@@ -359,6 +359,82 @@ SinglyLinkedListNode *singlyLinkedListGetHead(SinglyLinkedList *pList)
     return pList->head;
 }
 
+SinglyLinkedListNode *singlyLinkedListNodeNext(SinglyLinkedListNode *pNode)
+{
+    if (pNode == NULL)
+    {
+        printf("[INFO] : Pointer to node is NULL | singlyLinkedListNodeNext \n");
+        return NULL;
+    }
+
+    return pNode->next;
+}
+
+void *singlyLinkedListNodeGet(SinglyLinkedList *pList, SinglyLinkedListNode *pNode)
+{
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListNodeGet \n");
+        return NULL;
+    }
+
+    if (pNode == NULL)
+    {
+        printf("[INFO] : Pointer to node is NULL | singlyLinkedListNodeGet \n");
+        return NULL;
+    }
+
+    void *cp = (void *)malloc(pList->size);
+
+    if (cp == NULL)
+    {
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeGet \n");
+        return NULL;
+    }
+
+    memcpy_s(cp, pList->size, pNode->value, pList->size);
+
+    return cp;
+}
+
+int singlyLinkedListNodeSet(SinglyLinkedList *pList, SinglyLinkedListNode *pNode, void *value)
+{
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListNodeSet \n");
+        return -1;
+    }
+
+    if (pNode == NULL)
+    {
+        printf("[INFO] : Pointer to node is NULL | singlyLinkedListNodeSet \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | singlyLinkedListNodeSet \n");
+        return -1;
+    }
+
+    free(pNode->value);
+    pNode->value = NULL;
+
+    void *cp = (void *)malloc(pList->size);
+
+    if (cp == NULL)
+    {
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeSet \n");
+        return -1;
+    }
+
+    memcpy_s(cp, pList->size, value, pList->size);
+
+    pNode->value = cp;
+
+    return 0;
+}
+
 void singlyLinkedListFree(SinglyLinkedList *pList)
 {
     if (pList == NULL)

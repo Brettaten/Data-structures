@@ -113,6 +113,41 @@ int singlyLinkedListSize(SinglyLinkedList *pList);
 SinglyLinkedListNode *singlyLinkedListGetHead(SinglyLinkedList *pList);
 
 /**
+ * Function used to get the next node
+ * 
+ * @param pNode pointer to the node
+ * 
+ * @return Success: pointer to the next node | Failure: NULL
+ */
+SinglyLinkedListNode *singlyLinkedListNodeNext(SinglyLinkedListNode *pNode);
+
+/**
+ * Function used to get the value of a node
+ * 
+ * @param pList pointer to the list
+ * @param pNode pointer to the node
+ * 
+ * @return Success: value of the node | Failure: NULL
+ * 
+ * @note The returned pointer is a deep copy and thus, has to be freed by the caller
+ */
+void *singlyLinkedListNodeGet(SinglyLinkedList *pList, SinglyLinkedListNode *pNode);
+
+/**
+ * Function used to set the value of a node directly
+ * 
+ * @param pList pointer to the list
+ * @param pNode pointer to the list
+ * @param value ponter to the value
+ * 
+ * @return Success: 0 | Failure: -1
+ * 
+ * @note The passed value does not have to be allocated on the heap. 
+ * The function creates a deep copy of the value before adding it to the list.
+ */
+int singlyLinkedListNodeSet(SinglyLinkedList *pList, SinglyLinkedListNode *pNode, void *value);
+
+/**
  * Function used to free the passed list
  * 
  * @param pList pointer to the list
