@@ -39,7 +39,7 @@ void *listGet(List *pList, int index);
  * @return Success: 0 | Failure: -1
  * 
  * @note The passed value does not have to be allocated on the heap. 
- * The function creates a deep copy of value before adding it to the list.
+ * The function creates a deep copy of the value before adding it to the list.
  */
 int listSet(List *pList, void *value, int index);
 
@@ -52,7 +52,7 @@ int listSet(List *pList, void *value, int index);
  * @return Success: 0 | Failure: -1
  * 
  * @note The passed value does not have to be allocated on the heap. 
- * The function creates a deep copy of value before adding it to the list.
+ * The function creates a deep copy of the value before adding it to the list.
  * @note When the allocated memory for the list is not large enough, the data gets reallocated
  * and is now able to hold twice as much memory.
  */
@@ -68,7 +68,7 @@ int listAdd(List *pList, void *value);
  * @return Success: 0 | Failure: -1
  * 
  * @note The passed value does not have to be allocated on the heap. 
- * The function creates a deep copy of value before adding it to the list.
+ * The function creates a deep copy of the value before adding it to the list.
  * @note When using this function, the data that is located at the index or at a higher index
  * will be shifted to the next index to make room for the new value by swapping.
  */
