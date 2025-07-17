@@ -1,10 +1,40 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "singlyLinkedList.h"
 
+/**
+ * Function used to get a node at the passed index
+ *
+ * @param pList pointer to the list
+ * @param index position in the list
+ *
+ * @return Success: pointer to a node | Failure: NULL
+ */
 SinglyLinkedListNode *singlyLinkedListGetNode(SinglyLinkedList *pList, int index);
+
+/**
+ * Function used determine whether an index is in bounds
+ *
+ * @param pList pointer to the list
+ * @param index position in the list
+ *
+ * @return true or false
+ */
+bool isIndexInBounds(SinglyLinkedList *pList, int index);
+
+/**
+ * Function used to free a node
+ *
+ * @param pNode pointer to the node
+ *
+ * @return NULL
+ *
+ * @note This function only frees the pointer. If a struct is stored, that itself contains a pointer,
+ * this pointer will not be freed.
+ */
 void freeNode(SinglyLinkedListNode *pNode);
 
 typedef struct SinglyLinkedList
@@ -26,7 +56,7 @@ SinglyLinkedList *singlyLinkedListCreate(int size)
 
     if (pList == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | singlyListCreate \n");
         return NULL;
     }
 
@@ -39,9 +69,15 @@ SinglyLinkedList *singlyLinkedListCreate(int size)
 
 void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
     {
-        printf("Index out of bounds!");
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListGet \n");
+        return NULL;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | singlyLinkedListGet \n");
         return NULL;
     }
 
@@ -51,7 +87,7 @@ void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | singlyListCreate \n");
         return NULL;
     }
 
@@ -62,9 +98,21 @@ void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
 
 int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
     {
-        printf("Index out of bounds!");
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListSet \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | singlyLinkedListSet \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | singlyLinkedListSet \n");
         return -1;
     }
 
@@ -72,6 +120,7 @@ int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
 
     if (pNode == NULL)
     {
+        printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListSet \n");
         return -1;
     }
 
@@ -82,7 +131,7 @@ int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | singlyListSet \n");
         return -1;
     }
     memcpy_s(cp, pList->size, value, pList->size);
@@ -94,11 +143,23 @@ int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
 
 int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListAdd \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | singlyLinkedListAdd \n");
+        return -1;
+    }
+
     void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | singlyListAdd \n");
         return -1;
     }
 
@@ -108,7 +169,7 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
     if (pNodeNew == NULL)
     {
         free(cp);
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | singlyListAdd \n");
         return -1;
     }
 
@@ -126,6 +187,7 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
         if (node == NULL)
         {
             free(pNodeNew);
+            printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListAdd \n");
             return -1;
         }
 
@@ -139,9 +201,21 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
 
 int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
     {
-        printf("Index out of bounds!");
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListAddIndex \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | singlyLinkedListAddIndex \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | singlyLinkedListAddIndex \n");
         return -1;
     }
 
@@ -159,7 +233,7 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
     if (pNodeNew == NULL)
     {
         free(cp);
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | singlyListAddIndex \n");
         return -1;
     }
 
@@ -183,7 +257,8 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 
         if (pNodeP == NULL)
         {
-            free(pNodeNew);
+            freeNode(pNodeNew);
+            printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListAddIndex \n");
             return -1;
         }
 
@@ -200,15 +275,21 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 
 int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
 {
-    if (pList->length == 0)
+    if (pList == NULL)
     {
-        printf("List is empty!");
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListRemove \n");
         return -1;
     }
 
-    if (index >= pList->length || index < 0)
+    if (pList->length == 0)
     {
-        printf("Index out of bounds!");
+        printf("[INFO] : List is empty | singlyLinkedListRemove \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds)
+    {
+        printf("[INFO] : Index out of bounds | singlyLinkedListRemove \n");
         return -1;
     }
 
@@ -229,6 +310,7 @@ int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
 
         if (pNodeP == NULL)
         {
+            printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListRemove \n");
             return -1;
         }
 
@@ -246,21 +328,45 @@ int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
 
 int singlyLinkedListLength(SinglyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListLength \n");
+        return -1;
+    }
+
     return pList->length;
 }
 
 int singlyLinkedListSize(SinglyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListSize \n");
+        return -1;
+    }
+
     return pList->size;
 }
 
 SinglyLinkedListNode *singlyLinkedListGetHead(SinglyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListGetHead \n");
+        return NULL;
+    }
+
     return pList->head;
 }
 
 void singlyLinkedListFree(SinglyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[INFO] : Pointer to list is NULL | singlyLinkedListFree \n");
+        return;
+    }
+
     SinglyLinkedListNode *pNode = pList->head;
 
     for (int i = 0; i < pList->length; i++)
@@ -276,15 +382,21 @@ void singlyLinkedListFree(SinglyLinkedList *pList)
 
 SinglyLinkedListNode *singlyLinkedListGetNode(SinglyLinkedList *pList, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
     {
-        printf("Index out of bounds!");
+        printf("[WARN] : Pointer to list is NULL | singlyLinkedListGetNode \n");
         return NULL;
     }
 
     if (pList->length == 0)
     {
-        printf("Can not get a node from an empty list!");
+        printf("[INFO] : List is empty | singlyLinkedListGetNode \n");
+        return NULL;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | singlyLinkedListGetNode \n");
         return NULL;
     }
 
@@ -298,8 +410,34 @@ SinglyLinkedListNode *singlyLinkedListGetNode(SinglyLinkedList *pList, int index
     return node;
 }
 
+bool isIndexInBounds(SinglyLinkedList *pList, int index)
+{
+    if (pList == NULL)
+    {
+        printf("[ERROR] : Pointer to list is NULL | isIndexInBounds \n");
+        return -1;
+    }
+
+    if (pList == NULL)
+    {
+        return false;
+    }
+
+    if (index < 0 || index >= pList->length)
+    {
+        return false;
+    }
+    return true;
+}
+
 void freeNode(SinglyLinkedListNode *pNode)
 {
+    if (pNode == NULL)
+    {
+        printf("[INFO] : Pointer to node is NULL | freeNode \n");
+        return;
+    }
+
     free(pNode->value);
     pNode->value = NULL;
     pNode->next = NULL;

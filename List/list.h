@@ -105,7 +105,7 @@ int listRemove(List *pList, int index);
  * 
  * @param pList pointer to the list
  * 
- * @return length
+ * @return Success: length | Failure: -1
  */
 int listLength(List *pList);
 
@@ -114,7 +114,7 @@ int listLength(List *pList);
  * 
  * @param pList pointer to the list
  * 
- * @return size
+ * @return Success: size | Failure: -1
  */
 int listSize(List *pList);
 
