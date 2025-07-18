@@ -1,5 +1,10 @@
 /**
  * Struct that represents a singly linked list
+ * 
+ * @note Only use this list to store data that has the same size as specified.
+ * @note Only store one data type in each list to be safe.
+ * @note When storing elements, that itself contain dynamic memory, make sure to free it 
+ * before freeing the element or the list.
  */
 typedef struct SinglyLinkedList SinglyLinkedList;
 
