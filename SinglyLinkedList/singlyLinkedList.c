@@ -83,6 +83,12 @@ void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
 
     SinglyLinkedListNode *pNode = singlyLinkedListGetNode(pList, index);
 
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListGet \n");
+        return -1;
+    }
+
     void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
