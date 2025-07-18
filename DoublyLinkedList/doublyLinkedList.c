@@ -1,10 +1,40 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "doublyLinkedList.h"
 
+/**
+ * Function used to get a node at the passed index
+ *
+ * @param pList pointer to the list
+ * @param index position in the list
+ *
+ * @return Success: pointer to a node | Failure: NULL
+ */
 DoublyLinkedListNode *doublyLinkedListGetNode(DoublyLinkedList *pList, int index);
+
+/**
+ * Function used determine whether an index is in bounds
+ *
+ * @param pList pointer to the list
+ * @param index position in the list
+ *
+ * @return true or false
+ */
+bool isIndexInBounds(DoublyLinkedList *pList, int index);
+
+/**
+ * Function used to free a node
+ *
+ * @param pNode pointer to the node
+ *
+ * @return NULL
+ *
+ * @note This function only frees the pointer. If a struct is stored, that itself contains a pointer,
+ * this pointer will not be freed.
+ */
 void freeNode(DoublyLinkedListNode *pNode);
 
 typedef struct DoublyLinkedList
@@ -28,7 +58,7 @@ DoublyLinkedList *doublyLinkedListCreate(int size)
 
     if (pList == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListCreate \n");
         return NULL;
     }
 
@@ -42,19 +72,31 @@ DoublyLinkedList *doublyLinkedListCreate(int size)
 
 void *doublyLinkedListGet(DoublyLinkedList *pList, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
     {
-        printf("Index out of bounds!");
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListGet \n");
+        return NULL;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | doublyLinkedListGet \n");
         return NULL;
     }
 
     DoublyLinkedListNode *pNode = doublyLinkedListGetNode(pList, index);
 
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Function doublyLinkedListGetNode failed | doublyLinkedListGet \n");
+        return NULL;
+    }
+
     void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListGet \n");
         return NULL;
     }
 
@@ -65,9 +107,21 @@ void *doublyLinkedListGet(DoublyLinkedList *pList, int index)
 
 int doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
     {
-        printf("Index out of bounds!");
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListSet \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | doublyLinkedListSet \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | doublyLinkedListSet \n");
         return -1;
     }
 
@@ -75,6 +129,7 @@ int doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
 
     if (pNode == NULL)
     {
+        printf("[ERROR] : Function doublyLinkedListGetNode failed | doublyLinkedListSet \n");
         return -1;
     }
 
@@ -85,7 +140,7 @@ int doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListSet \n");
         return -1;
     }
 
@@ -98,11 +153,23 @@ int doublyLinkedListSet(DoublyLinkedList *pList, void *value, int index)
 
 int doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListAdd \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | doublyLinkedListAdd \n");
+        return -1;
+    }
+
     void *cp = (void *)malloc(pList->size);
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListAdd \n");
         return -1;
     }
 
@@ -112,7 +179,7 @@ int doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
     if (pNodeNew == NULL)
     {
         free(cp);
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListAdd \n");
         return -1;
     }
 
@@ -142,9 +209,21 @@ int doublyLinkedListAdd(DoublyLinkedList *pList, void *value)
 
 int doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
     {
-        printf("Index out of bounds!");
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListAddIndex \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | doublyLinkedListAddIndex \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | doublyLinkedListAddIndex \n");
         return -1;
     }
 
@@ -152,7 +231,7 @@ int doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
 
     if (cp == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListAddIndex \n");
         return -1;
     }
 
@@ -162,7 +241,7 @@ int doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
     if (pNodeNew == NULL)
     {
         free(cp);
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListAddIndex \n");
         return -1;
     }
 
@@ -192,7 +271,9 @@ int doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
 
         if (pNodeP == NULL)
         {
+            free(cp);
             free(pNodeNew);
+            printf("[ERROR] : Function doublyLinkedListGetNode failed | doublyLinkedListAddIndex \n");
             return -1;
         }
 
@@ -211,15 +292,21 @@ int doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
 
 int doublyLinkedListRemove(DoublyLinkedList *pList, int index)
 {
-    if (pList->length == 0)
+    if (pList == NULL)
     {
-        printf("List is empty!");
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListRemove \n");
         return -1;
     }
 
-    if (index >= pList->length || index < 0)
+    if (pList->length == 0)
     {
-        printf("Index out of bounds!");
+        printf("[INFO] : List is empty | doublyLinkedListRemove \n");
+        return -1;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | doublyLinkedListRemove \n");
         return -1;
     }
 
@@ -249,6 +336,7 @@ int doublyLinkedListRemove(DoublyLinkedList *pList, int index)
 
         if (pNodeP == NULL)
         {
+            printf("[ERROR] : Function doublyLinkedListGetNode failed | doublyLinkedListRemove \n");
             return -1;
         }
 
@@ -275,26 +363,143 @@ int doublyLinkedListRemove(DoublyLinkedList *pList, int index)
 
 int doublyLinkedListLength(DoublyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListLength \n");
+        return -1;
+    }
+
     return pList->length;
 }
 
 int doublyLinkedListSize(DoublyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListSize \n");
+        return -1;
+    }
+
     return pList->size;
 }
 
 DoublyLinkedListNode *doublyLinkedListGetHead(DoublyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListGetHead \n");
+        return NULL;
+    }
+
     return pList->head;
 }
 
 DoublyLinkedListNode *doublyLinkedListGetTail(DoublyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListGetTail \n");
+        return NULL;
+    }
+
     return pList->tail;
+}
+
+DoublyLinkedListNode *doublyLinkedListNodeNext(DoublyLinkedListNode *pNode)
+{
+    if (pNode == NULL)
+    {
+        printf("[INFO] : Pointer to node is NULL | doublyLinkedListNodeNext \n");
+        return NULL;
+    }
+
+    return pNode->next;
+}
+
+DoublyLinkedListNode *doublyLinkedListNodePrev(DoublyLinkedListNode *pNode)
+{
+    if (pNode == NULL)
+    {
+        printf("[INFO] : Pointer to node is NULL | doublyLinkedListNodeNext \n");
+        return NULL;
+    }
+
+    return pNode->prev;
+}
+
+void *doublyLinkedListNodeGet(DoublyLinkedList *pList, DoublyLinkedListNode *pNode)
+{
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListNodeGet \n");
+        return NULL;
+    }
+
+    if (pNode == NULL)
+    {
+        printf("[INFO] : Pointer to node is NULL | doublyLinkedListNodeGet \n");
+        return NULL;
+    }
+
+    void *cp = (void *)malloc(pList->size);
+
+    if (cp == NULL)
+    {
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListNodeGet \n");
+        return NULL;
+    }
+
+    memcpy_s(cp, pList->size, pNode->value, pList->size);
+
+    return cp;
+}
+
+int doublyLinkedListNodeSet(DoublyLinkedList *pList, DoublyLinkedListNode *pNode, void *value)
+{
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListNodeSet \n");
+        return -1;
+    }
+
+    if (pNode == NULL)
+    {
+        printf("[INFO] : Pointer to node is NULL | doublyLinkedListNodeSet \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to value is NULL | doublyLinkedListNodeSet \n");
+        return -1;
+    }
+
+    free(pNode->value);
+    pNode->value = NULL;
+
+    void *cp = (void *)malloc(pList->size);
+
+    if (cp == NULL)
+    {
+        printf("[ERROR] : Memory allocation failed | doublyLinkedListNodeSet \n");
+        return -1;
+    }
+
+    memcpy_s(cp, pList->size, value, pList->size);
+
+    pNode->value = cp;
+
+    return 0;
 }
 
 void doublyLinkedListFree(DoublyLinkedList *pList)
 {
+    if (pList == NULL)
+    {
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListGetHead \n");
+        return;
+    }
+
     DoublyLinkedListNode *pNode = pList->head;
 
     for (int i = 0; i < pList->length; i++)
@@ -310,15 +515,21 @@ void doublyLinkedListFree(DoublyLinkedList *pList)
 
 DoublyLinkedListNode *doublyLinkedListGetNode(DoublyLinkedList *pList, int index)
 {
-    if (index >= pList->length || index < 0)
+    if (pList == NULL)
     {
-        printf("Index out of bounds!");
+        printf("[WARN] : Pointer to list is NULL | doublyLinkedListGetNode \n");
         return NULL;
     }
 
     if (pList->length == 0)
     {
-        printf("Can not get a node from an empty list!");
+        printf("[INFO] : List is empty | doublyLinkedListGetNode \n");
+        return NULL;
+    }
+
+    if (!isIndexInBounds(pList, index))
+    {
+        printf("[INFO] : Index out of bounds | doublyLinkedListGetNode\n");
         return NULL;
     }
 
@@ -344,6 +555,26 @@ DoublyLinkedListNode *doublyLinkedListGetNode(DoublyLinkedList *pList, int index
     }
 
     return node;
+}
+
+bool isIndexInBounds(DoublyLinkedList *pList, int index)
+{
+    if (pList == NULL)
+    {
+        printf("[ERROR] : Pointer to list is NULL | isIndexInBounds \n");
+        return -1;
+    }
+
+    if (pList == NULL)
+    {
+        return false;
+    }
+
+    if (index < 0 || index >= pList->length)
+    {
+        return false;
+    }
+    return true;
 }
 
 void freeNode(DoublyLinkedListNode *pNode)
