@@ -56,7 +56,7 @@ SinglyLinkedList *singlyLinkedListCreate(int size)
 
     if (pList == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyListCreate \n");
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListCreate \n");
         return NULL;
     }
 
@@ -87,7 +87,7 @@ void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
 
     if (cp == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyListCreate \n");
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListCreate \n");
         return NULL;
     }
 
@@ -131,7 +131,7 @@ int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
 
     if (cp == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyListSet \n");
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListSet \n");
         return -1;
     }
     memcpy_s(cp, pList->size, value, pList->size);
@@ -159,7 +159,7 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
 
     if (cp == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyListAdd \n");
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListAdd \n");
         return -1;
     }
 
@@ -169,7 +169,7 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
     if (pNodeNew == NULL)
     {
         free(cp);
-        printf("[ERROR] : Memory allocation failed | singlyListAdd \n");
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListAdd \n");
         return -1;
     }
 
@@ -233,7 +233,7 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
     if (pNodeNew == NULL)
     {
         free(cp);
-        printf("[ERROR] : Memory allocation failed | singlyListAddIndex \n");
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListAddIndex \n");
         return -1;
     }
 
