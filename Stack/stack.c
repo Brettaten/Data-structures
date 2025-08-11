@@ -18,7 +18,7 @@ Stack *stackCreate(int size)
 
     if (pStack == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | stackCreate \n");
         return NULL;
     }
 
@@ -32,10 +32,23 @@ Stack *stackCreate(int size)
 
 int stackPush(Stack *pStack, void *value)
 {
+    if (pStack == NULL)
+    {
+        printf("[WARN] : Pointer to the stack is null | stackPush \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to the value is null | stackPush \n");
+        return -1;
+    }
+
     int st1 = doublyLinkedListAdd(pStack->list, value);
 
     if (st1 == -1)
     {
+        printf("[ERROR] : Function doublyLinkedListAdd failed | stackPush \n");
         return -1;
     }
 
@@ -46,10 +59,17 @@ int stackPush(Stack *pStack, void *value)
 
 void *stackPop(Stack *pStack)
 {
+    if (pStack == NULL)
+    {
+        printf("[WARN] : Pointer to the stack is null | stackPop \n");
+        return NULL;
+    }
+
     void *value = stackPeek(pStack);
 
     if (value == NULL)
     {
+        printf("[ERROR] : Function stackPeek failed | stackPop \n");
         return NULL;
     }
 
@@ -57,6 +77,7 @@ void *stackPop(Stack *pStack)
 
     if (st1 == -1)
     {
+        printf("[ERROR] : Function doublyLinkedListRemove failed | stackPop \n");
         free(value);
         return NULL;
     }
@@ -68,9 +89,15 @@ void *stackPop(Stack *pStack)
 
 void *stackPeek(Stack *pStack)
 {
-    if (pStack->list == 0)
+    if (pStack == NULL)
     {
-        printf("List is empty!");
+        printf("[WARN] : Pointer to the stack is null | stackPeek \n");
+        return NULL;
+    }
+
+    if (pStack->length == 0)
+    {
+        printf("[INFO] : List is empty | stackPeek \n");
         return NULL;
     }
 
@@ -78,6 +105,7 @@ void *stackPeek(Stack *pStack)
 
     if (value == NULL)
     {
+        printf("[ERROR] : Function doublyLinkedListGet failed | stackPeek \n");
         return NULL;
     }
 
@@ -86,11 +114,23 @@ void *stackPeek(Stack *pStack)
 
 int stackLength(Stack *pStack)
 {
+    if (pStack == NULL)
+    {
+        printf("[WARN] : Pointer to the stack is null | stackLength \n");
+        return -1;
+    }
+
     return pStack->length;
 }
 
 int stackSize(Stack *pStack)
 {
+    if (pStack == NULL)
+    {
+        printf("[WARN] : Pointer to the stack is null | stackSize \n");
+        return -1;
+    }
+
     return pStack->size;
 }
 

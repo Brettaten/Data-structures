@@ -18,7 +18,7 @@ Queue *queueCreate(int size)
 
     if (pQueue == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | queueCreate \n");
         return NULL;
     }
 
@@ -32,10 +32,23 @@ Queue *queueCreate(int size)
 
 int queuePush(Queue *pQueue, void *value)
 {
+    if (pQueue == NULL)
+    {
+        printf("[WARN] : Pointer to the queue is null | queuePush \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : Pointer to the value is null | queuePush \n");
+        return -1;
+    }
+
     int st1 = doublyLinkedListAdd(pQueue->list, value);
 
     if (st1 == -1)
     {
+        printf("[ERROR] : Function doublyLinkedListAdd failed | queuePush \n");
         return -1;
     }
 
@@ -46,10 +59,17 @@ int queuePush(Queue *pQueue, void *value)
 
 void *queuePop(Queue *pQueue)
 {
+    if (pQueue == NULL)
+    {
+        printf("[WARN] : Pointer to the queue is null | queuePop \n");
+        return NULL;
+    }
+
     void *value = queuePeek(pQueue);
 
     if (value == NULL)
     {
+        printf("[ERROR] : Function queuePeek failed | queuePop \n");
         return NULL;
     }
 
@@ -57,6 +77,7 @@ void *queuePop(Queue *pQueue)
 
     if (st1 == -1)
     {
+        printf("[ERROR] : Function doublyLinkedListRemove failed | queuePop \n");
         free(value);
         return NULL;
     }
@@ -68,9 +89,15 @@ void *queuePop(Queue *pQueue)
 
 void *queuePeek(Queue *pQueue)
 {
-    if (pQueue->list == 0)
+    if (pQueue == NULL)
     {
-        printf("List is empty!");
+        printf("[WARN] : Pointer to the queue is null | queuePeek \n");
+        return NULL;
+    }
+
+    if (pQueue->length == 0)
+    {
+        printf("[INFO] : List is empty | queuePeek \n");
         return NULL;
     }
 
@@ -78,6 +105,7 @@ void *queuePeek(Queue *pQueue)
 
     if (value == NULL)
     {
+        printf("[ERROR] : Function doublyLinkedListGet failed | queuePeek \n");
         return NULL;
     }
 
@@ -86,11 +114,23 @@ void *queuePeek(Queue *pQueue)
 
 int queueLength(Queue *pQueue)
 {
+    if (pQueue == NULL)
+    {
+        printf("[WARN] : Pointer to the queue is null | queueLength \n");
+        return -1;
+    }
+
     return pQueue->length;
 }
 
 int queueSize(Queue *pQueue)
 {
+    if (pQueue == NULL)
+    {
+        printf("[WARN] : Pointer to the queue is null | queueSize \n");
+        return -1;
+    }
+
     return doublyLinkedListSize(pQueue->list);
 }
 
