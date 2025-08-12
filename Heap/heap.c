@@ -15,11 +15,61 @@ typedef struct Heap
     bool isMaxHeap;
 } Heap;
 
+/**
+ * Function used to sort the heap upwards
+ *
+ * @param pHeap the pointer to the heap
+ *
+ * @return Success: 0 | Failure: -1
+ */
 int upHeapify(Heap *pHeap);
+
+/**
+ * Function used to sort the heap downwards
+ *
+ * @param pHeap the pointer to the heap
+ *
+ * @return Success: 0 | Failure: -1
+ */
 int downHeapify(Heap *pHeap);
+
+/**
+ * Function used to get the parent's index from the passed index
+ *
+ * @param i the index
+ *
+ * @return Success: the index | Failure: -1
+ */
 int getParent(int i);
+
+/**
+ * Function used to get the sibling's index from the passed index
+ *
+ * @param pHeap the pointer to the heap
+ * @param i the index
+ *
+ * @return Success: the index | Failure: -1
+ */
 int getSibling(Heap *pHeap, int i);
+
+/**
+ * Function used to get the left child's index from the passed index
+ *
+ * @param pHeap the pointer to the heap
+ * @param i the index
+ *
+ * @return Success: the index | Failure: -1
+ */
 int getChildLeft(Heap *pHeap, int i);
+
+/**
+ * Function used to get the right child's index from the passed index
+ *
+ * @param pHeap the pointer to the heap
+ * @param i the index
+ *
+ * @return Success: the index | Failure: -1
+ */
 int getChildRight(Heap *pHeap, int i);
 
 Heap *heapCreate(int size, bool isMaxHeap)
@@ -28,7 +78,7 @@ Heap *heapCreate(int size, bool isMaxHeap)
 
     if (pHeap == NULL)
     {
-        printf("Memory allocation failed!\n");
+        printf("[ERROR] : Memory allocation failed! | heapCreate \n");
         return NULL;
     }
 
@@ -37,7 +87,7 @@ Heap *heapCreate(int size, bool isMaxHeap)
     if (pListValue == NULL)
     {
         free(pHeap);
-        printf("Memory allocation failed!\n");
+        printf("[ERROR] : Memory allocation failed! | heapCreate \n");
         return NULL;
     }
 
@@ -47,7 +97,7 @@ Heap *heapCreate(int size, bool isMaxHeap)
     {
         listFree(pListValue);
         free(pHeap);
-        printf("Memory allocation failed!\n");
+        printf("[ERROR] : Memory allocation failed! | heapCreate \n");
         return NULL;
     }
 
@@ -62,12 +112,24 @@ Heap *heapCreate(int size, bool isMaxHeap)
 
 int heapAdd(Heap *pHeap, void *value, int comparator)
 {
+    if (pHeap == NULL)
+    {
+        printf("[WARN] : heap is null | heapAdd \n");
+        return -1;
+    }
+
+    if (value == NULL)
+    {
+        printf("[WARN] : value is null | heapAdd \n");
+        return -1;
+    }
+
     int st1 = listAdd(pHeap->listValue, value);
     int st2 = listAdd(pHeap->listComp, &comparator);
 
     if (st1 == -1 || st2 == -1)
     {
-        printf("[ERROR] : heap insert failed!\n");
+        printf("[ERROR] : heap insert failed! | heapAdd \n");
         return -1;
     }
 
@@ -77,7 +139,7 @@ int heapAdd(Heap *pHeap, void *value, int comparator)
 
     if (st3 == -1)
     {
-        printf("[ERROR] : upheapify failed!\n");
+        printf("[ERROR] : upheapify failed! | heapAdd \n");
         return -1;
     }
 
@@ -86,11 +148,20 @@ int heapAdd(Heap *pHeap, void *value, int comparator)
 
 int heapRemove(Heap *pHeap)
 {
-    if(pHeap->length == 0){
+    if (pHeap == NULL)
+    {
+        printf("[WARN] : heap is null | heapRemove \n");
+        return -1;
+    }
+
+    if (pHeap->length == 0)
+    {
+        printf("[INFO] : heap is empty | heapRemove \n");
         return 0;
     }
 
-    if(pHeap->length == 1){
+    if (pHeap->length == 1)
+    {
         listRemove(pHeap->listValue, 0);
         listRemove(pHeap->listComp, 0);
 
@@ -105,7 +176,7 @@ int heapRemove(Heap *pHeap)
 
     if (st1 == -1 || st2 == -1 || st3 == -1 || st4 == -1)
     {
-        printf("[ERROR] : heap removal failed!\n");
+        printf("[ERROR] : heap removal failed! | heapRemove \n");
         return -1;
     }
 
@@ -115,7 +186,7 @@ int heapRemove(Heap *pHeap)
 
     if (st5 == -1)
     {
-        printf("[ERROR] : upheapify failed!\n");
+        printf("[ERROR] : upheapify failed! | heapRemove \n");
         return -1;
     }
 
@@ -124,7 +195,15 @@ int heapRemove(Heap *pHeap)
 
 void *heapGetRoot(Heap *pHeap)
 {
-    if(pHeap->length == 0){
+    if (pHeap == NULL)
+    {
+        printf("[WARN] : heap is null | heapGetRoot \n");
+        return NULL;
+    }
+
+    if (pHeap->length == 0)
+    {
+        printf("[INFO] : heap is empty | heapGetRoot \n");
         return NULL;
     }
 
@@ -135,11 +214,23 @@ void *heapGetRoot(Heap *pHeap)
 
 int heapLength(Heap *pHeap)
 {
+    if (pHeap == NULL)
+    {
+        printf("[WARN] : heap is null | heapLength \n");
+        return -1;
+    }
+
     return pHeap->length;
 }
 
 int heapSize(Heap *pHeap)
 {
+    if (pHeap == NULL)
+    {
+        printf("[WARN] : heap is null | heapSize \n");
+        return -1;
+    }
+
     return pHeap->size;
 }
 
@@ -153,6 +244,12 @@ void heapFree(Heap *pHeap)
 
 int upHeapify(Heap *pHeap)
 {
+    if (pHeap == NULL)
+    {
+        printf("[WARN] : heap is null | upHeapify \n");
+        return -1;
+    }
+
     int index = pHeap->length - 1;
 
     while (index != 0)
@@ -163,7 +260,7 @@ int upHeapify(Heap *pHeap)
 
         if (parent == NULL || cp == NULL)
         {
-            printf("[Error] : parent can not be null!\n");
+            printf("[Error] : parent can not be null! | upHeapify \n");
             return -1;
         }
 
@@ -173,8 +270,14 @@ int upHeapify(Heap *pHeap)
         {
             if (*parent < *cp)
             {
-                listSwap(pHeap->listValue, index, iParent);
-                listSwap(pHeap->listComp, index, iParent);
+                int st1 = listSwap(pHeap->listValue, index, iParent);
+                int st2 = listSwap(pHeap->listComp, index, iParent);
+
+                if (st1 == -1 || st2 == -1)
+                {
+                    printf("[ERROR] : function listSwap failed | upHeapify \n");
+                    return -1;
+                }
             }
             else
             {
@@ -185,8 +288,14 @@ int upHeapify(Heap *pHeap)
         {
             if (*parent > *cp)
             {
-                listSwap(pHeap->listValue, index, iParent);
-                listSwap(pHeap->listComp, index, iParent);
+                int st3 = listSwap(pHeap->listValue, index, iParent);
+                int st4 = listSwap(pHeap->listComp, index, iParent);
+
+                if (st3 == -1 || st4 == -1)
+                {
+                    printf("[ERROR] : function listSwap failed | upHeapify \n");
+                    return -1;
+                }
             }
             else
             {
@@ -208,6 +317,12 @@ int upHeapify(Heap *pHeap)
 
 int downHeapify(Heap *pHeap)
 {
+    if (pHeap == NULL)
+    {
+        printf("[WARN] : heap is null | downHeapify \n");
+        return -1;
+    }
+
     int index = 0;
     int iLeftChild = getChildLeft(pHeap, index);
     int iRightChild = getChildRight(pHeap, index);
@@ -218,7 +333,8 @@ int downHeapify(Heap *pHeap)
         int *parent = listGet(pHeap->listComp, index);
         int *leftChild = listGet(pHeap->listComp, iLeftChild);
         int *rightChild = NULL;
-        if(iRightChild != -1){
+        if (iRightChild != -1)
+        {
             rightChild = listGet(pHeap->listComp, iRightChild);
         }
 
@@ -241,7 +357,7 @@ int downHeapify(Heap *pHeap)
 
         if (parent == NULL || leftChild == NULL)
         {
-            printf("[Error] : pointers can not be null!\n");
+            printf("[Error] : pointers can not be null! | downHeapify\n");
             return -1;
         }
 
@@ -251,8 +367,14 @@ int downHeapify(Heap *pHeap)
         {
             if (*parent < *bigSibling)
             {
-                listSwap(pHeap->listValue, index, iBigSibling);
-                listSwap(pHeap->listComp, index, iBigSibling);
+                int st1 = listSwap(pHeap->listValue, index, iBigSibling);
+                int st2 = listSwap(pHeap->listComp, index, iBigSibling);
+
+                if (st1 == -1 || st2 == -1)
+                {
+                    printf("[ERROR] : function listSwap failed | downHeapify \n");
+                    return -1;
+                }
 
                 index = iBigSibling;
                 iLeftChild = getChildLeft(pHeap, index);
@@ -267,8 +389,14 @@ int downHeapify(Heap *pHeap)
         {
             if (*parent > *smallSibling)
             {
-                listSwap(pHeap->listValue, index, iSmallSibling);
-                listSwap(pHeap->listComp, index, iSmallSibling);
+                int st3 = listSwap(pHeap->listValue, index, iSmallSibling);
+                int st4 = listSwap(pHeap->listComp, index, iSmallSibling);
+
+                if (st3 == -1 || st4 == -1)
+                {
+                    printf("[ERROR] : function listSwap failed | downHeapify \n");
+                    return -1;
+                }
 
                 index = iSmallSibling;
                 iLeftChild = getChildLeft(pHeap, index);
@@ -308,6 +436,12 @@ int getParent(int i)
 
 int getSibling(Heap *pHeap, int i)
 {
+    if (pHeap == NULL)
+    {
+        printf("[ERROR] : heap is null | getSibling \n");
+        return -1;
+    }
+
     int index;
 
     if (i % 2 == 0)
@@ -331,6 +465,12 @@ int getSibling(Heap *pHeap, int i)
 
 int getChildLeft(Heap *pHeap, int i)
 {
+    if (pHeap == NULL)
+    {
+        printf("[ERROR] : heap is null | getChildLeft \n");
+        return -1;
+    }
+
     int index = (2 * i) + 1;
 
     if (index <= 0 || index >= pHeap->length)
@@ -345,6 +485,12 @@ int getChildLeft(Heap *pHeap, int i)
 
 int getChildRight(Heap *pHeap, int i)
 {
+    if (pHeap == NULL)
+    {
+        printf("[ERROR] : heap is null | getChildRight \n");
+        return -1;
+    }
+
     int index = (2 * i) + 2;
 
     if (index <= 0 || index >= pHeap->length)

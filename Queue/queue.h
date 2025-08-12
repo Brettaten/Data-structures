@@ -66,7 +66,7 @@ int queueSize(Queue *pQueue);
 /**
  * Function used to free the passed queue
  * 
- * @param pList the pointer to the queue
+ * @param pQueue the pointer to the queue
  * 
  * @note This function frees the pointers of the stored data. If a struct is stored, that itself contains a pointer, 
  * this pointer will not be freed.
