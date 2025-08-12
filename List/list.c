@@ -230,6 +230,42 @@ int listSwap(List *pList, int index1, int index2)
     return 0;
 }
 
+List *listCopy(List *pList)
+{
+    if(pList == NULL){
+        printf("[WARN] : Pointer to list is NULL | listCopy \n");
+        return NULL;
+    }
+
+    List *listCpy = listCreate(pList->size);
+
+    if(listCopy == NULL){
+        printf("[ERROR] : Function listCreate failed | listCopy \n");
+        return NULL;
+    }
+
+    for(int i = 0; i < pList->length; i++){
+        void *temp;
+        temp = listGet(pList, i);
+
+        if(temp == NULL){
+            printf("[ERROR] : Function listGet failed | listCopy \n");
+            return NULL;
+        }
+
+        int st1 = listAdd(listCpy, temp);
+
+        if(st1 == -1){
+            printf("[ERROR] : Function listAdd failed | listCopy \n");
+            return NULL;
+        }
+
+        free(temp);
+    }
+    
+    return listCpy;
+}
+
 int listRemove(List *pList, int index)
 {
     if (pList == NULL)
@@ -315,11 +351,6 @@ bool isIndexInBounds(List *pList, int index)
     {
         printf("[ERROR] : Pointer to list is NULL | isIndexInBounds \n");
         return -1;
-    }
-
-    if (pList == NULL)
-    {
-        return false;
     }
 
     if (index < 0 || index >= pList->length)
