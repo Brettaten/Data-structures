@@ -20,7 +20,7 @@ typedef struct String
  *
  * @return true or false
  */
-bool isIndexInBounds(String *pString, int index);
+bool isIndexInBoundsString(String *pString, int index);
 
 String *stringCreate(char *string)
 {
@@ -62,7 +62,7 @@ String *stringCreate(char *string)
     return pString;
 }
 
-int stringAdd(String *pString, char *value)
+int stringAdd(String *pString, char value)
 {
     if (pString == NULL)
     {
@@ -70,13 +70,7 @@ int stringAdd(String *pString, char *value)
         return -1;
     }
 
-    if (value == NULL)
-    {
-        printf("[ERROR] : value is null | stringAdd \n");
-        return -1;
-    }
-
-    int st1 = listAdd(pString->list, value);
+    int st1 = listAdd(pString->list, &value);
 
     if (st1 == -1)
     {
@@ -87,7 +81,7 @@ int stringAdd(String *pString, char *value)
     pString->length++;
 }
 
-int stringAddIndex(String *pString, char *value, int index)
+int stringAddIndex(String *pString, char value, int index)
 {
     if (pString == NULL)
     {
@@ -95,19 +89,13 @@ int stringAddIndex(String *pString, char *value, int index)
         return -1;
     }
 
-    if (value == NULL)
-    {
-        printf("[ERROR] : value is null | stringAddIndex \n");
-        return -1;
-    }
-
-    if (!isIndexInBounds(pString, index))
+    if (!isIndexInBoundsString(pString, index))
     {
         printf("[WARN] : Index out of bounds | stringAddIndex \n");
         return -1;
     }
 
-    int st1 = listAddIndex(pString->list, value, index);
+    int st1 = listAddIndex(pString->list, &value, index);
 
     if (st1 == -1)
     {
@@ -118,18 +106,18 @@ int stringAddIndex(String *pString, char *value, int index)
     pString->length++;
 }
 
-char *stringGet(String *pString, int index)
+char stringGet(String *pString, int index)
 {
     if (pString == NULL)
     {
         printf("[ERROR] : String is null | stringGet \n");
-        return NULL;
+        return -1;
     }
 
-    if (!isIndexInBounds(pString, index))
+    if (!isIndexInBoundsString(pString, index))
     {
         printf("[WARN] : Index out of bounds | stringGet \n");
-        return NULL;
+        return -1;
     }
 
     char *c = (char *)listGet(pString->list, index);
@@ -137,13 +125,17 @@ char *stringGet(String *pString, int index)
     if (c == NULL)
     {
         printf("[ERROR] : Function listGet failed : stringGet \n");
-        return NULL;
+        return -1;
     }
 
-    return c;
+    char chr = *c;
+
+    free(c);
+
+    return chr;
 }
 
-int stringSet(String *pString, char *value, int index)
+int stringSet(String *pString, char value, int index)
 {
     if (pString == NULL)
     {
@@ -151,19 +143,13 @@ int stringSet(String *pString, char *value, int index)
         return -1;
     }
 
-    if (value == NULL)
-    {
-        printf("[ERROR] : value is null | stringSet \n");
-        return -1;
-    }
-
-    if (!isIndexInBounds(pString, index))
+    if (!isIndexInBoundsString(pString, index))
     {
         printf("[WARN] : Index out of bounds | stringSet \n");
         return -1;
     }
 
-    int st1 = listSet(pString->list, value, index);
+    int st1 = listSet(pString->list, &value, index);
 
     if (st1 == -1)
     {
@@ -182,7 +168,7 @@ int stringSwap(String *pString, int index1, int index2)
         return -1;
     }
 
-    if (!isIndexInBounds(pString, index1) || !isIndexInBounds(pString, index2))
+    if (!isIndexInBoundsString(pString, index1) || !isIndexInBoundsString(pString, index2))
     {
         printf("[WARN] : Index out of bounds | stringSwap \n");
         return -1;
@@ -215,9 +201,9 @@ int stringCat(String *pStringDest, String *pStringSrc)
 
     for (int i = 0; i < pStringSrc->length; i++)
     {
-        char *temp = stringGet(pStringSrc, i);
+        char temp = stringGet(pStringSrc, i);
 
-        if (temp == NULL)
+        if (temp == -1)
         {
             printf("[ERROR] : Function stringGet failed | \n");
             return -1;
@@ -230,8 +216,6 @@ int stringCat(String *pStringDest, String *pStringSrc)
             printf("[ERROR] : Function stringAdd failed | \n");
             return -1;
         }
-
-        free(temp);
     }
 
     return 0;
@@ -274,7 +258,7 @@ String *stringSub(String *pString, int beginning, int end)
         return NULL;
     }
 
-    if (!isIndexInBounds(pString, beginning) || !isIndexInBounds(pString, end))
+    if (!isIndexInBoundsString(pString, beginning) || !isIndexInBoundsString(pString, end))
     {
         printf("[INFO] : Index out of bounds | stringSub \n");
         return NULL;
@@ -298,9 +282,9 @@ String *stringSub(String *pString, int beginning, int end)
 
     for (int i = beginning; i < beginning + length; i++)
     {
-        char *temp = stringGet(pString, i);
+        char temp = stringGet(pString, i);
 
-        if (temp == NULL)
+        if (temp == -1)
         {
             printf("[ERROR] : Function stringGet failed | stringSub \n");
             return NULL;
@@ -310,12 +294,9 @@ String *stringSub(String *pString, int beginning, int end)
 
         if (st1 == -1)
         {
-            free(temp);
             printf("[ERROR] : Function stringAdd failed | stringSub \n");
             return NULL;
         }
-
-        free(temp);
     }
 
     return stringNew;
@@ -344,9 +325,9 @@ int stringReplace(String *pString, String *pStringDest, String *pStringSrc)
         {
             if (matchCounter < pStringSrc->length)
             {
-                char *temp = stringGet(pStringSrc, matchCounter);
+                char temp = stringGet(pStringSrc, matchCounter);
 
-                if (temp == NULL)
+                if (temp == -1)
                 {
                     printf("[ERROR] : Function stringGet failed | stringReplace \n");
                     return -1;
@@ -356,11 +337,9 @@ int stringReplace(String *pString, String *pStringDest, String *pStringSrc)
 
                 if (st1 == -1)
                 {
-                    free(temp);
                     printf("[ERROR] : Function stringSet failed | stringReplace \n");
                     return -1;
                 }
-                free(temp);
 
                 matchCounter++;
             }
@@ -385,7 +364,7 @@ int stringReplace(String *pString, String *pStringDest, String *pStringSrc)
         {
             int end = i + pStringSrc->length - 1;
 
-            if (!isIndexInBounds(pString, end))
+            if (!isIndexInBoundsString(pString, end))
             {
                 return 0;
             }
@@ -427,23 +406,19 @@ bool stringEquals(String *pString1, String *pString2)
 
     for (int i = 0; i < pString1->length; i++)
     {
-        char *temp1 = stringGet(pString1, i);
-        char *temp2 = stringGet(pString2, i);
+        char temp1 = stringGet(pString1, i);
+        char temp2 = stringGet(pString2, i);
 
-        if (temp1 == NULL || temp2 == NULL)
+        if (temp1 == -1 || temp2 == -1)
         {
             printf("[ERROR] : Function stringGet failed | stringEquals \n");
             return false;
         }
 
-        if (*temp1 != *temp2)
+        if (temp1 != temp2)
         {
-            free(temp1);
-            free(temp2);
             return false;
         }
-        free(temp1);
-        free(temp2);
     }
     return true;
 }
@@ -466,9 +441,9 @@ char *stringToArr(String *pString)
 
     for (int i = 0; i < pString->length; i++)
     {
-        char *temp = stringGet(pString, i);
+        char temp = stringGet(pString, i);
 
-        if (temp == NULL)
+        if (temp == -1)
         {
             printf("[ERROR] : Function stringGet failed | stringToArr \n");
             return NULL;
@@ -488,7 +463,7 @@ int stringRemove(String *pString, int index)
         return -1;
     }
 
-    if (!isIndexInBounds(pString, index))
+    if (!isIndexInBoundsString(pString, index))
     {
         printf("[WARN] : Index out of bounds | stringRemove \n");
         return -1;
@@ -536,11 +511,11 @@ void stringFree(String *pString)
     free(pString);
 }
 
-bool isIndexInBounds(String *pString, int index)
+bool isIndexInBoundsString(String *pString, int index)
 {
     if (pString == NULL)
     {
-        printf("[ERROR] : Pointer to string is NULL | isIndexInBounds \n");
+        printf("[ERROR] : Pointer to string is NULL | isIndexInBoundsString \n");
         return -1;
     }
 

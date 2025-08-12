@@ -21,7 +21,7 @@ String *stringCreate(char *charArr);
  * 
  * @return Success: 0 | Failure: -1
  */
-int stringAdd(String *pString, char *value);
+int stringAdd(String *pString, char value);
 
 /**
  * Function that adds a char at the passed index
@@ -32,7 +32,7 @@ int stringAdd(String *pString, char *value);
  * 
  * @return Success: 0 | Failure: -1
  */
-int stringAddIndex(String *pString, char *value, int index);
+int stringAddIndex(String *pString, char value, int index);
 
 /**
  * Function that gets the char at the passed index
@@ -40,9 +40,9 @@ int stringAddIndex(String *pString, char *value, int index);
  * @param pString the pointer to the string
  * @param index the index
  * 
- * @return Success: the pointer to the char | Failure: NULL
+ * @return Success: the char | Failure: -1
  */
-char *stringGet(String *pString, int index);
+char stringGet(String *pString, int index);
 
 /**
  * Function that sets the char at the passed index
@@ -53,7 +53,7 @@ char *stringGet(String *pString, int index);
  * 
  * @return Success: 0 | Failure: -1
  */
-int stringSet(String *pString, char *value, int index);
+int stringSet(String *pString, char value, int index);
 
 /**
  * Function that swaps two chars
