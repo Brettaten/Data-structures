@@ -23,7 +23,7 @@ SinglyLinkedListNode *singlyLinkedListGetNode(SinglyLinkedList *pList, int index
  *
  * @return true or false
  */
-bool isIndexInBounds(SinglyLinkedList *pList, int index);
+bool isIndexInBoundsSingly(SinglyLinkedList *pList, int index);
 
 /**
  * Function used to free a node
@@ -75,7 +75,7 @@ void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
         return NULL;
     }
 
-    if (!isIndexInBounds(pList, index))
+    if (!isIndexInBoundsSingly(pList, index))
     {
         printf("[INFO] : Index out of bounds | singlyLinkedListGet \n");
         return NULL;
@@ -116,7 +116,7 @@ int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
         return -1;
     }
 
-    if (!isIndexInBounds(pList, index))
+    if (!isIndexInBoundsSingly(pList, index))
     {
         printf("[INFO] : Index out of bounds | singlyLinkedListSet \n");
         return -1;
@@ -219,7 +219,7 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
         return -1;
     }
 
-    if (!isIndexInBounds(pList, index))
+    if (!isIndexInBoundsSingly(pList, index))
     {
         printf("[INFO] : Index out of bounds | singlyLinkedListAddIndex \n");
         return -1;
@@ -293,7 +293,7 @@ int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
         return -1;
     }
 
-    if (!isIndexInBounds)
+    if (!isIndexInBoundsSingly)
     {
         printf("[INFO] : Index out of bounds | singlyLinkedListRemove \n");
         return -1;
@@ -476,7 +476,7 @@ SinglyLinkedListNode *singlyLinkedListGetNode(SinglyLinkedList *pList, int index
         return NULL;
     }
 
-    if (!isIndexInBounds(pList, index))
+    if (!isIndexInBoundsSingly(pList, index))
     {
         printf("[INFO] : Index out of bounds | singlyLinkedListGetNode \n");
         return NULL;
@@ -492,11 +492,11 @@ SinglyLinkedListNode *singlyLinkedListGetNode(SinglyLinkedList *pList, int index
     return node;
 }
 
-bool isIndexInBounds(SinglyLinkedList *pList, int index)
+bool isIndexInBoundsSingly(SinglyLinkedList *pList, int index)
 {
     if (pList == NULL)
     {
-        printf("[ERROR] : Pointer to list is NULL | isIndexInBounds \n");
+        printf("[ERROR] : Pointer to list is NULL | isIndexInBoundsSingly \n");
         return -1;
     }
 

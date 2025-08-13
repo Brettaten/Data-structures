@@ -21,7 +21,7 @@ typedef struct List
  *
  * @return true or false
  */
-bool isIndexInBounds(List *pList, int index);
+bool isIndexInBoundsList(List *pList, int index);
 
 List *listCreate(int size)
 {
@@ -55,7 +55,7 @@ void *listGet(List *pList, int index)
         return NULL;
     }
 
-    if (!isIndexInBounds(pList, index))
+    if (!isIndexInBoundsList(pList, index))
     {
         printf("[INFO] : Index out of bounds | listGet \n");
         return NULL;
@@ -89,7 +89,7 @@ int listSet(List *pList, void *value, int index)
         return -1;
     }
 
-    if (!isIndexInBounds(pList, index))
+    if (!isIndexInBoundsList(pList, index))
     {
         printf("[INFO] : Index out of bounds | listSet \n");
         return -1;
@@ -169,7 +169,7 @@ int listAddIndex(List *pList, void *value, int index)
         return -1;
     }
 
-    if (!isIndexInBounds(pList, index))
+    if (!isIndexInBoundsList(pList, index))
     {
         printf("[INFO] : Index out of bounds | listAddIndex \n");
         return -1;
@@ -217,7 +217,7 @@ int listSwap(List *pList, int index1, int index2)
         return -1;
     }
 
-    if (!isIndexInBounds(pList, index1) || !isIndexInBounds(pList, index2))
+    if (!isIndexInBoundsList(pList, index1) || !isIndexInBoundsList(pList, index2))
     {
         printf("[INFO] : Index out of bounds | listSwap \n");
         return -1;
@@ -274,7 +274,7 @@ int listRemove(List *pList, int index)
         return -1;
     }
 
-    if (!isIndexInBounds(pList, index))
+    if (!isIndexInBoundsList(pList, index))
     {
         printf("[INFO] : Index out of bounds | listRemove \n");
         return -1;
@@ -345,11 +345,11 @@ int listSize(List *pList)
     return pList->size;
 }
 
-bool isIndexInBounds(List *pList, int index)
+bool isIndexInBoundsList(List *pList, int index)
 {
     if (pList == NULL)
     {
-        printf("[ERROR] : Pointer to list is NULL | isIndexInBounds \n");
+        printf("[ERROR] : Pointer to list is NULL | isIndexInBoundsList \n");
         return -1;
     }
 
