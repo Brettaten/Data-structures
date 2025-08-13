@@ -250,6 +250,28 @@ String *stringCopy(String *pString)
     return stringCpy;
 }
 
+int stringClear(String *pString)
+{
+    if (pString == NULL)
+    {
+        printf("[ERROR] : String is null | stringClear \n");
+        return -1;
+    }
+
+    for (int i = pString->length - 1; i >= 0; i--)
+    {
+        int st1 = stringRemove(pString, i);
+
+        if (st1 == -1)
+        {
+            printf("[ERROR] : Function stringRemove failed | stringClear \n");
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
 String *stringSub(String *pString, int beginning, int end)
 {
     if (pString == NULL)
@@ -343,10 +365,12 @@ int stringReplace(String *pString, String *pStringDest, String *pStringSrc)
 
                 matchCounter++;
             }
-            else if(matchCounter < pStringDest->length){
+            else if (matchCounter < pStringDest->length)
+            {
                 int st2 = stringRemove(pString, i);
 
-                if(st2 == -1){
+                if (st2 == -1)
+                {
                     printf("[ERROR] : Function stringRemove failed | stringReplace \n");
                     return -1;
                 }
@@ -355,7 +379,8 @@ int stringReplace(String *pString, String *pStringDest, String *pStringSrc)
                 matchCounter++;
             }
 
-            else if(matchCounter < pStringSrc->length){
+            else if (matchCounter < pStringSrc->length)
+            {
                 char temp = stringGet(pStringSrc, matchCounter);
 
                 if (temp == -1)

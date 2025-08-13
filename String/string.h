@@ -86,6 +86,15 @@ int stringCat(String *pStringDest, String *pStringSrc);
 String *stringCopy(String *pString);
 
 /**
+ * Function that clears the passed string
+ * 
+ * @param pString the pointer to the string
+ * 
+ * @return Success: 0 | Failure: -1
+ */
+int stringClear(String *pString);
+
+/**
  * Function that returns a substring of an existing string
  * 
  * @param pString the pointer to the string
