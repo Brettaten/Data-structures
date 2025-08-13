@@ -323,7 +323,7 @@ int stringReplace(String *pString, String *pStringDest, String *pStringSrc)
     {
         if (isMatch)
         {
-            if (matchCounter < pStringSrc->length)
+            if (matchCounter < pStringDest->length && matchCounter < pStringSrc->length)
             {
                 char temp = stringGet(pStringSrc, matchCounter);
 
@@ -354,15 +354,36 @@ int stringReplace(String *pString, String *pStringDest, String *pStringSrc)
                 i--;
                 matchCounter++;
             }
+
+            else if(matchCounter < pStringSrc->length){
+                char temp = stringGet(pStringSrc, matchCounter);
+
+                if (temp == -1)
+                {
+                    printf("[ERROR] : Function stringGet failed | stringReplace \n");
+                    return -1;
+                }
+
+                int st3 = stringAddIndex(pString, temp, i);
+
+                if (st3 == -1)
+                {
+                    printf("[ERROR] : Function stringSet failed | stringReplace \n");
+                    return -1;
+                }
+
+                matchCounter++;
+            }
             else
             {
                 isMatch = false;
                 matchCounter = 0;
+                i--;
             }
         }
         else
         {
-            int end = i + pStringSrc->length - 1;
+            int end = i + pStringDest->length - 1;
 
             if (!isIndexInBoundsString(pString, end))
             {
