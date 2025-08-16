@@ -82,8 +82,12 @@ int stringCat(String *pStringDest, String *pStringSrc);
  * @param pString the pointer to the string
  * 
  * @return Success: the copy of the string | Failure: NULL
+ * 
+ * @note Void datatypes are used for this function because one might
+ *      store this struct inside this another struct and thus function pointers
+ *      with void datatype are needed
  */
-String *stringCopy(String *pString);
+void *stringCopy(void *pString);
 
 /**
  * Function that clears the passed string
@@ -102,6 +106,7 @@ int stringClear(String *pString);
  * @param end the ending index (inclusive)
  * 
  * @return Success: a substring | Failure: NULL
+ * 
  */
 String *stringSub(String *pString, int beginning, int end);
 
@@ -167,5 +172,9 @@ int stringSize(String *pString);
  * Function used to free the passed string
  * 
  * @param pList the pointer to the string
- */
-void stringFree(String *pString);
+ * 
+ * @note Void datatypes are used for this function because one might
+ *      store this struct inside this another struct and thus function pointers
+ *      with void datatype are needed
+ */ 
+void stringFree(void *pString);
