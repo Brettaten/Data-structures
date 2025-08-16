@@ -26,22 +26,33 @@ SinglyLinkedListNode *singlyLinkedListGetNode(SinglyLinkedList *pList, int index
 bool isIndexInBoundsSingly(SinglyLinkedList *pList, int index);
 
 /**
+ * Function used to create a deep copy of a node
+ *
+ * @param pList the pointer to the list
+ * @param pNode the pointer to the node
+ *
+ * @return Success: the copy of the node | Failure: NULL
+ * 
+ * @note The value is deep copied while next is set to null
+ */
+SinglyLinkedListNode *singlyLinkedListNodeCopy(SinglyLinkedList *pList, SinglyLinkedListNode *pNode);
+
+/**
  * Function used to free a node
  *
  * @param pNode pointer to the node
  *
- * @return NULL
- *
- * @note This function only frees the pointer. If a struct is stored, that itself contains a pointer,
- * this pointer will not be freed.
+ * @return NULL.
  */
-void freeNode(SinglyLinkedListNode *pNode);
+void freeNode(SinglyLinkedList *pList, SinglyLinkedListNode *pNode);
 
 typedef struct SinglyLinkedList
 {
     SinglyLinkedListNode *head;
     int length;
     int size;
+    void *(*copyElement)(void *);
+    void (*freeElement)(void *);
 } SinglyLinkedList;
 
 typedef struct SinglyLinkedListNode
@@ -50,7 +61,7 @@ typedef struct SinglyLinkedListNode
     void *value;
 } SinglyLinkedListNode;
 
-SinglyLinkedList *singlyLinkedListCreate(int size)
+SinglyLinkedList *singlyLinkedListCreate(int size, void *(*copyElement)(void *), void (*freeElement)(void *))
 {
     SinglyLinkedList *pList = (SinglyLinkedList *)malloc(sizeof(SinglyLinkedList));
 
@@ -63,6 +74,8 @@ SinglyLinkedList *singlyLinkedListCreate(int size)
     pList->head = NULL;
     pList->length = 0;
     pList->size = size;
+    pList->copyElement = copyElement;
+    pList->freeElement = freeElement;
 
     return pList;
 }
@@ -88,16 +101,30 @@ void *singlyLinkedListGet(SinglyLinkedList *pList, int index)
         printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListGet \n");
         return NULL;
     }
+    void *cp;
 
-    void *cp = (void *)malloc(pList->size);
-
-    if (cp == NULL)
+    if (pList->copyElement == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyLinkedListCreate \n");
-        return NULL;
-    }
+        cp = (void *)malloc(pList->size);
 
-    memcpy_s(cp, pList->size, pNode->value, pList->size);
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Memory allocation failed | singlyLinkedListCreate \n");
+            return NULL;
+        }
+
+        memcpy(cp, pNode->value, pList->size);
+    }
+    else
+    {
+        cp = pList->copyElement(pNode->value);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Function copyElement failed | singlyLinkedListGet \n");
+            return NULL;
+        }
+    }
 
     return cp;
 }
@@ -130,17 +157,40 @@ int singlyLinkedListSet(SinglyLinkedList *pList, void *value, int index)
         return -1;
     }
 
-    free(pNode->value);
-    pNode->value = NULL;
-
-    void *cp = (void *)malloc(pList->size);
-
-    if (cp == NULL)
+    if (pList->freeElement == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyLinkedListSet \n");
-        return -1;
+        free(pNode->value);
     }
-    memcpy_s(cp, pList->size, value, pList->size);
+    else
+    {
+        pList->freeElement(pNode->value);
+    }
+
+    pNode->value = NULL;
+    void *cp;
+
+    if (pList->copyElement == NULL)
+    {
+        cp = (void *)malloc(pList->size);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Memory allocation failed | singlyLinkedListSet \n");
+            return -1;
+        }
+
+        memcpy(cp, value, pList->size);
+    }
+    else
+    {
+        cp = pList->copyElement(value);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Function copyElement failed | singlyLinkedListSet \n");
+            return -1;
+        }
+    }
 
     pNode->value = cp;
 
@@ -161,20 +211,43 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
         return -1;
     }
 
-    void *cp = (void *)malloc(pList->size);
+    void *cp;
 
-    if (cp == NULL)
+    if (pList->copyElement == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyLinkedListAdd \n");
-        return -1;
-    }
+        cp = (void *)malloc(pList->size);
 
-    memcpy_s(cp, pList->size, value, pList->size);
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Memory allocation failed | singlyLinkedListAdd \n");
+            return -1;
+        }
+
+        memcpy(cp, value, pList->size);
+    }
+    else
+    {
+        cp = pList->copyElement(value);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Function copyElement failed | singlyLinkedListAdd \n");
+            return -1;
+        }
+    }
 
     SinglyLinkedListNode *pNodeNew = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
     if (pNodeNew == NULL)
     {
-        free(cp);
+        if (pList->freeElement == NULL)
+        {
+            free(cp);
+        }
+        else
+        {
+            pList->freeElement(cp);
+        }
+
         printf("[ERROR] : Memory allocation failed | singlyLinkedListAdd \n");
         return -1;
     }
@@ -192,7 +265,7 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
 
         if (node == NULL)
         {
-            free(pNodeNew);
+            freeNode(pList, pNodeNew);
             printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListAdd \n");
             return -1;
         }
@@ -225,20 +298,43 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
         return -1;
     }
 
-    void *cp = (void *)malloc(pList->size);
+    void *cp;
 
-    if (cp == NULL)
+    if (pList->copyElement == NULL)
     {
-        printf("Memory allocation failed!");
-        return -1;
-    }
+        cp = (void *)malloc(pList->size);
 
-    memcpy_s(cp, pList->size, value, pList->size);
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Memory allocation failed | singlyLinkedListAddIndex \n");
+            return -1;
+        }
+
+        memcpy(cp, value, pList->size);
+    }
+    else
+    {
+        cp = pList->copyElement(value);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Function copyElement failed | singlyLinkedListAddIndex \n");
+            return -1;
+        }
+    }
 
     SinglyLinkedListNode *pNodeNew = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
     if (pNodeNew == NULL)
     {
-        free(cp);
+        if (pList->freeElement == NULL)
+        {
+            free(cp);
+        }
+        else
+        {
+            pList->freeElement(cp);
+        }
+
         printf("[ERROR] : Memory allocation failed | singlyLinkedListAddIndex \n");
         return -1;
     }
@@ -263,7 +359,7 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 
         if (pNodeP == NULL)
         {
-            freeNode(pNodeNew);
+            freeNode(pList, pNodeNew);
             printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListAddIndex \n");
             return -1;
         }
@@ -277,6 +373,46 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
     pList->length++;
 
     return 0;
+}
+
+void *singlyLinkedListCopy(void *pList)
+{
+    SinglyLinkedList *cp = (SinglyLinkedList *) pList;
+
+    if(cp == NULL){
+        printf("[ERROR] : List is null | singlyLinkedListCopy \n");
+        return NULL;
+    }
+
+    SinglyLinkedList *copy = (SinglyLinkedList *) malloc(sizeof(SinglyLinkedList));
+
+    if(copy == NULL){
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListCopy \n");
+        return NULL;
+    }
+
+    copy->copyElement = cp->copyElement;
+    copy->freeElement = cp->freeElement;
+    copy->length = cp->length;
+    copy->size = cp->size;
+
+    copy->head = singlyLinkedListNodeCopy(cp, cp->head);
+
+    SinglyLinkedListNode *dest = copy->head;
+    SinglyLinkedListNode *src = cp->head;
+
+    while(src->next != NULL){
+        dest->next = singlyLinkedListNodeCopy(cp, src->next);
+
+        if(dest->next == NULL){
+            printf("[ERROR] : Function singlyLinkedListNodeCopy failed | singlyLinkedListCopy \n");
+            return NULL;
+        }
+
+        dest = dest->next;
+        src = src->next;
+    }
+    return copy;
 }
 
 int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
@@ -307,7 +443,7 @@ int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
         pNodeP = NULL;
         pNodeC = pList->head->next;
 
-        freeNode(pList->head);
+        freeNode(pList, pList->head);
         pList->head = pNodeC;
     }
     else
@@ -322,7 +458,7 @@ int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
 
         pNodeC = pNodeP->next->next;
 
-        freeNode(pNodeP->next);
+        freeNode(pList, pNodeP->next);
         pNodeP->next = NULL;
         pNodeP->next = pNodeC;
     }
@@ -390,15 +526,30 @@ void *singlyLinkedListNodeGet(SinglyLinkedList *pList, SinglyLinkedListNode *pNo
         return NULL;
     }
 
-    void *cp = (void *)malloc(pList->size);
+    void *cp;
 
-    if (cp == NULL)
+    if (pList->copyElement == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeGet \n");
-        return NULL;
-    }
+        cp = (void *)malloc(pList->size);
 
-    memcpy_s(cp, pList->size, pNode->value, pList->size);
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeGet \n");
+            return NULL;
+        }
+
+        memcpy(cp, pNode->value, pList->size);
+    }
+    else
+    {
+        cp = pList->copyElement(pNode->value);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Function copyElement failed | singlyLinkedListNodeGet \n");
+            return NULL;
+        }
+    }
 
     return cp;
 }
@@ -423,43 +574,68 @@ int singlyLinkedListNodeSet(SinglyLinkedList *pList, SinglyLinkedListNode *pNode
         return -1;
     }
 
-    free(pNode->value);
-    pNode->value = NULL;
-
-    void *cp = (void *)malloc(pList->size);
-
-    if (cp == NULL)
+    if (pList->freeElement == NULL)
     {
-        printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeSet \n");
-        return -1;
+        free(pNode->value);
+    }
+    else
+    {
+        pList->freeElement(pNode->value);
     }
 
-    memcpy_s(cp, pList->size, value, pList->size);
+    pNode->value = NULL;
+
+    void *cp;
+
+    if (pList->copyElement == NULL)
+    {
+        cp = (void *)malloc(pList->size);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeSet \n");
+            return -1;
+        }
+
+        memcpy(cp, value, pList->size);
+    }
+    else
+    {
+        cp = pList->copyElement(value);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Function copyElement failed | singlyLinkedListNodeSet \n");
+            return -1;
+        }
+    }
 
     pNode->value = cp;
 
     return 0;
 }
 
-void singlyLinkedListFree(SinglyLinkedList *pList)
+void singlyLinkedListFree(void *pList)
 {
-    if (pList == NULL)
+    SinglyLinkedList *cp = (SinglyLinkedList *)pList;
+
+    if (cp == NULL)
     {
         printf("[INFO] : Pointer to list is NULL | singlyLinkedListFree \n");
         return;
     }
 
-    SinglyLinkedListNode *pNode = pList->head;
+    SinglyLinkedListNode *pNode = cp->head;
 
-    for (int i = 0; i < pList->length; i++)
+    for (int i = 0; i < cp->length; i++)
     {
         SinglyLinkedListNode *pNodeTemp = pNode->next;
 
-        freeNode(pNode);
+        freeNode(cp, pNode);
         pNode = pNodeTemp;
     }
 
-    free(pList);
+    free(cp);
 }
 
 SinglyLinkedListNode *singlyLinkedListGetNode(SinglyLinkedList *pList, int index)
@@ -512,7 +688,65 @@ bool isIndexInBoundsSingly(SinglyLinkedList *pList, int index)
     return true;
 }
 
-void freeNode(SinglyLinkedListNode *pNode)
+SinglyLinkedListNode *singlyLinkedListNodeCopy(SinglyLinkedList *pList, SinglyLinkedListNode *pNode)
+{
+    if (pList == NULL)
+    {
+        printf("[ERROR] : List is null | singlyLinkedListNodeCopy \n");
+        return NULL;
+    }
+
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Node is null | sinlgyLinkedListNodeCopy \n");
+        return NULL;
+    }
+
+    if(pNode->value == NULL){
+        printf("[ERROR] : Value is null | singlyLinkedListNodeCopy \n");
+        return NULL;
+    }
+
+    SinglyLinkedListNode *copy = (SinglyLinkedListNode *) malloc(sizeof(SinglyLinkedListNode));
+
+    if(copy == NULL){
+        printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeCopy \n");
+        return NULL;
+    }
+
+    copy->next = NULL;
+
+    void *cp;
+
+    if (pList->copyElement == NULL)
+    {
+        cp = (void *)malloc(pList->size);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Memory allocation failed | sinlgyLinkedListNodeCopy \n");
+            return NULL;
+        }
+
+        memcpy(cp, pNode->value, pList->size);
+    }
+    else
+    {
+        cp = pList->copyElement(pNode->value);
+
+        if (cp == NULL)
+        {
+            printf("[ERROR] : Function copyElement failed | sinlgyLinkedListNodeCopy \n");
+            return NULL;
+        }
+    }
+
+    copy->value = cp;
+
+    return copy;
+}
+
+void freeNode(SinglyLinkedList *pList, SinglyLinkedListNode *pNode)
 {
     if (pNode == NULL)
     {
@@ -520,7 +754,15 @@ void freeNode(SinglyLinkedListNode *pNode)
         return;
     }
 
-    free(pNode->value);
+    if (pList->freeElement == NULL)
+    {
+        free(pNode->value);
+    }
+    else
+    {
+        pList->freeElement(pNode->value);
+    }
+
     pNode->value = NULL;
     pNode->next = NULL;
     free(pNode);
