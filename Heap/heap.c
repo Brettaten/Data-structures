@@ -10,8 +10,8 @@ typedef struct Heap
 {
     List *listValue;
     List *listComp;
-    int length;
-    int size;
+    void *(*copyElement)(void *);
+    void (*freeElement)(void *);
     bool isMaxHeap;
 } Heap;
 
@@ -72,7 +72,7 @@ int getChildLeft(Heap *pHeap, int i);
  */
 int getChildRight(Heap *pHeap, int i);
 
-Heap *heapCreate(int size, bool isMaxHeap)
+Heap *heapCreate(int size, bool isMaxHeap, void *(*copyElement)(void *), void (*freeElement)(void *))
 {
     Heap *pHeap = (Heap *)malloc(sizeof(Heap));
 
@@ -82,7 +82,7 @@ Heap *heapCreate(int size, bool isMaxHeap)
         return NULL;
     }
 
-    List *pListValue = listCreate(size);
+    List *pListValue = listCreate(size, copyElement, freeElement);
 
     if (pListValue == NULL)
     {
@@ -91,7 +91,7 @@ Heap *heapCreate(int size, bool isMaxHeap)
         return NULL;
     }
 
-    List *pListComp = listCreate(sizeof(int));
+    List *pListComp = listCreate(sizeof(int), NULL, NULL);
 
     if (pListComp == NULL)
     {
@@ -103,8 +103,8 @@ Heap *heapCreate(int size, bool isMaxHeap)
 
     pHeap->listValue = pListValue;
     pHeap->listComp = pListComp;
-    pHeap->size = size;
-    pHeap->length = 0;
+    pHeap->copyElement = copyElement;
+    pHeap->freeElement = freeElement;
     pHeap->isMaxHeap = isMaxHeap;
 
     return pHeap;
@@ -133,8 +133,6 @@ int heapAdd(Heap *pHeap, void *value, int comparator)
         return -1;
     }
 
-    pHeap->length++;
-
     int st3 = upHeapify(pHeap);
 
     if (st3 == -1)
@@ -154,33 +152,33 @@ int heapRemove(Heap *pHeap)
         return -1;
     }
 
-    if (pHeap->length == 0)
+    int length = heapLength(pHeap);
+    if (length == 0)
     {
         printf("[INFO] : heap is empty | heapRemove \n");
         return 0;
     }
 
-    if (pHeap->length == 1)
+    if (length == 1)
     {
         listRemove(pHeap->listValue, 0);
         listRemove(pHeap->listComp, 0);
 
-        pHeap->length--;
         return 0;
     }
 
-    int st1 = listSwap(pHeap->listValue, 0, pHeap->length - 1);
-    int st2 = listSwap(pHeap->listComp, 0, pHeap->length - 1);
-    int st3 = listRemove(pHeap->listValue, pHeap->length - 1);
-    int st4 = listRemove(pHeap->listComp, pHeap->length - 1);
+    length = heapLength(pHeap);
+
+    int st1 = listSwap(pHeap->listValue, 0, length - 1);
+    int st2 = listSwap(pHeap->listComp, 0, length - 1);
+    int st3 = listRemove(pHeap->listValue, length - 1);
+    int st4 = listRemove(pHeap->listComp, length - 1);
 
     if (st1 == -1 || st2 == -1 || st3 == -1 || st4 == -1)
     {
         printf("[ERROR] : heap removal failed! | heapRemove \n");
         return -1;
     }
-
-    pHeap->length--;
 
     int st5 = downHeapify(pHeap);
 
@@ -201,7 +199,8 @@ void *heapGetRoot(Heap *pHeap)
         return NULL;
     }
 
-    if (pHeap->length == 0)
+    int length = heapLength(pHeap);
+    if (length == 0)
     {
         printf("[INFO] : heap is empty | heapGetRoot \n");
         return NULL;
@@ -212,6 +211,46 @@ void *heapGetRoot(Heap *pHeap)
     return value;
 }
 
+void *heapCopy(void *pHeap)
+{
+    Heap *cp = (Heap *) pHeap;
+
+    if(cp == NULL){
+        printf("[ERROR] : Heap is null | heapCopy \n");
+        return NULL;
+    }
+
+    Heap *copy = (Heap *) malloc(sizeof(Heap));
+
+    if(copy == NULL){
+        printf("[ERROR] : Memory allocation failed | heapCopy \n");
+        return NULL;
+    }
+
+    copy->copyElement = cp->copyElement;
+    copy->freeElement = cp->freeElement;
+    copy->isMaxHeap = cp->isMaxHeap;
+
+    List *copyListValue = (List *) listCopy(cp->listValue);
+
+    if(copyListValue == NULL){
+        printf("[ERROR] : Function listCopy failed | heapCopy \n");
+        return NULL;
+    }
+
+        List *copyListComp = (List *) listCopy(cp->listComp);
+
+    if(copyListComp == NULL){
+        printf("[ERROR] : Function listCopy failed | heapCopy \n");
+        return NULL;
+    }
+
+    copy->listValue = copyListValue;
+    copy->listComp = copyListComp;
+
+    return copy;
+}
+
 int heapLength(Heap *pHeap)
 {
     if (pHeap == NULL)
@@ -220,7 +259,7 @@ int heapLength(Heap *pHeap)
         return -1;
     }
 
-    return pHeap->length;
+    return listLength(pHeap->listValue);
 }
 
 int heapSize(Heap *pHeap)
@@ -231,13 +270,20 @@ int heapSize(Heap *pHeap)
         return -1;
     }
 
-    return pHeap->size;
+    return listSize(pHeap->listValue);
 }
 
-void heapFree(Heap *pHeap)
+void heapFree(void *pHeap)
 {
-    listFree(pHeap->listValue);
-    listFree(pHeap->listComp);
+    Heap *cp = (Heap *) pHeap;
+
+    if(cp == NULL){
+        printf("[ERROR] : heap is null | heapFree \n");
+        return;
+    }
+
+    listFree(cp->listValue);
+    listFree(cp->listComp);
 
     free(pHeap);
 }
@@ -250,7 +296,8 @@ int upHeapify(Heap *pHeap)
         return -1;
     }
 
-    int index = pHeap->length - 1;
+    int length = heapLength(pHeap);
+    int index = length - 1;
 
     while (index != 0)
     {
@@ -453,7 +500,8 @@ int getSibling(Heap *pHeap, int i)
         index = i + 1;
     }
 
-    if (index <= 0 || index >= pHeap->length)
+    int length = heapLength(pHeap);
+    if (index <= 0 || index >= length)
     {
         return -1;
     }
@@ -472,8 +520,9 @@ int getChildLeft(Heap *pHeap, int i)
     }
 
     int index = (2 * i) + 1;
+    int length = heapLength(pHeap);
 
-    if (index <= 0 || index >= pHeap->length)
+    if (index <= 0 || index >= length)
     {
         return -1;
     }
@@ -492,8 +541,9 @@ int getChildRight(Heap *pHeap, int i)
     }
 
     int index = (2 * i) + 2;
+    int length = heapLength(pHeap);
 
-    if (index <= 0 || index >= pHeap->length)
+    if (index <= 0 || index >= length)
     {
         return -1;
     }
