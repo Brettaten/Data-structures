@@ -10,6 +10,9 @@ typedef struct String String;
  * @param charArr an initial string that can be null
  * 
  * @return Success: Pointer to the created string | Failure: NULL
+ * 
+ * @note The passed value does not have to be allocated on the heap.
+ * The function creates a deep copy of the value before adding it to the string.
  */
 String *stringCreate(char *charArr);
 
@@ -20,6 +23,9 @@ String *stringCreate(char *charArr);
  * @param value the pointer to the char
  * 
  * @return Success: 0 | Failure: -1
+ * 
+ * @note The passed value does not have to be allocated on the heap.
+ * The function creates a deep copy of the value before adding it to the string.
  */
 int stringAdd(String *pString, char value);
 
@@ -31,6 +37,9 @@ int stringAdd(String *pString, char value);
  * @param index the index
  * 
  * @return Success: 0 | Failure: -1
+ * 
+ * @note The passed value does not have to be allocated on the heap.
+ * The function creates a deep copy of the value before adding it to the string.
  */
 int stringAddIndex(String *pString, char value, int index);
 
@@ -41,6 +50,8 @@ int stringAddIndex(String *pString, char value, int index);
  * @param index the index
  * 
  * @return Success: the char | Failure: -1
+ * 
+ * @note The returned pointer is a deep copy and thus, has to be freed by the caller
  */
 char stringGet(String *pString, int index);
 
@@ -52,6 +63,9 @@ char stringGet(String *pString, int index);
  * @param index the index
  * 
  * @return Success: 0 | Failure: -1
+ * 
+ * @note The passed value does not have to be allocated on the heap.
+ * The function creates a deep copy of the value before adding it to the string.
  */
 int stringSet(String *pString, char value, int index);
 
@@ -106,7 +120,6 @@ int stringClear(String *pString);
  * @param end the ending index (inclusive)
  * 
  * @return Success: a substring | Failure: NULL
- * 
  */
 String *stringSub(String *pString, int beginning, int end);
 
