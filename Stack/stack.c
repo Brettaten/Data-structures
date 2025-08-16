@@ -75,7 +75,7 @@ void *stackPop(Stack *pStack)
 
     if (st1 == -1)
     {
-        if(pStack->freeElement == 0){
+        if(pStack->freeElement == NULL){
             free(value);
         }
         else{

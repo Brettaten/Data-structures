@@ -8,11 +8,11 @@
 typedef struct Queue
 {
     DoublyLinkedList *list;
-    int size;
-    int length;
+    void *(*copyElement)(void *);
+    void (*freeElement)(void *);
 } Queue;
 
-Queue *queueCreate(int size)
+Queue *queueCreate(int size, void *(*copyElement)(void *), void (*freeElement)(void *))
 {
     Queue *pQueue = (Queue *)malloc(sizeof(Queue));
 
@@ -22,10 +22,10 @@ Queue *queueCreate(int size)
         return NULL;
     }
 
-    DoublyLinkedList *pList = doublyLinkedListCreate(size);
+    DoublyLinkedList *pList = doublyLinkedListCreate(size, copyElement, freeElement);
     pQueue->list = pList;
-    pQueue->size = size;
-    pQueue->length = 0;
+    pQueue->copyElement = copyElement;
+    pQueue->freeElement = freeElement;
 
     return pQueue;
 }
@@ -52,8 +52,6 @@ int queuePush(Queue *pQueue, void *value)
         return -1;
     }
 
-    pQueue->length++;
-
     return 0;
 }
 
@@ -77,12 +75,16 @@ void *queuePop(Queue *pQueue)
 
     if (st1 == -1)
     {
+        if(pQueue->freeElement == NULL){
+            free(value);
+        }
+        else{
+            pQueue->freeElement(value);
+        }
+
         printf("[ERROR] : Function doublyLinkedListRemove failed | queuePop \n");
-        free(value);
         return NULL;
     }
-
-    pQueue->length--;
 
     return value;
 }
@@ -95,7 +97,8 @@ void *queuePeek(Queue *pQueue)
         return NULL;
     }
 
-    if (pQueue->length == 0)
+    int length = queueLength(pQueue);
+    if (length == 0)
     {
         printf("[INFO] : List is empty | queuePeek \n");
         return NULL;
@@ -112,6 +115,37 @@ void *queuePeek(Queue *pQueue)
     return value;
 }
 
+void *queueCopy(void *pQueue)
+{
+    Queue *cp = (Queue *) pQueue;
+
+    if(cp == NULL){
+        printf("[ERROR] : Queue is null | queueCopy \n");
+        return NULL;
+    }
+
+    Queue *copy = (Queue *) malloc(sizeof(Queue));
+
+    if(copy == NULL){
+        printf("[ERROR] : Memory allocation failed | queueCopy \n");
+        return NULL;
+    }
+
+    copy->copyElement = cp->copyElement;
+    copy->freeElement = cp->freeElement;
+
+    DoublyLinkedList *copyList = (DoublyLinkedList *) doublyLinkedListCopy(cp->list);
+
+    if(copyList == NULL){
+        printf("[ERROR] : Function doublyLinkedListCopy failed | queueCopy \n");
+        return NULL;
+    }
+
+    copy->list = copyList;
+
+    return copy;
+}
+
 int queueLength(Queue *pQueue)
 {
     if (pQueue == NULL)
@@ -120,7 +154,7 @@ int queueLength(Queue *pQueue)
         return -1;
     }
 
-    return pQueue->length;
+    return doublyLinkedListLength(pQueue->list);
 }
 
 int queueSize(Queue *pQueue)
@@ -134,9 +168,16 @@ int queueSize(Queue *pQueue)
     return doublyLinkedListSize(pQueue->list);
 }
 
-void queueFree(Queue *pQueue)
+void queueFree(void *pQueue)
 {
-    doublyLinkedListFree(pQueue->list);
+    Queue *cp = (Queue *) pQueue;
+    
+    if(cp == NULL){
+        printf("[WARN] : queue is null | queueFree \n");
+        return;
+    }
 
-    free(pQueue);
+    doublyLinkedListFree(cp->list);
+
+    free(cp);
 }
