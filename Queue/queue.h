@@ -81,7 +81,14 @@ int queueLength(Queue *pQueue);
  * 
  * @return Success: the size | Failure: -1
  */
-int queueSize(Queue *pQueue);
+int queueContentSize(Queue *pQueue);
+
+/**
+ * Function that returns the size of a queue struct
+ * 
+ * @return Success: the size
+ */
+int queueSize();
 
 /**
  * Function used to free the passed queue

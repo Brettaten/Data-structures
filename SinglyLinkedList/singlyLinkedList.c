@@ -479,7 +479,7 @@ int singlyLinkedListLength(SinglyLinkedList *pList)
     return pList->length;
 }
 
-int singlyLinkedListSize(SinglyLinkedList *pList)
+int singlyLinkedListContentSize(SinglyLinkedList *pList)
 {
     if (pList == NULL)
     {
@@ -488,6 +488,10 @@ int singlyLinkedListSize(SinglyLinkedList *pList)
     }
 
     return pList->size;
+}
+
+int singlyLinkedListSize(){
+    return sizeof(SinglyLinkedList);
 }
 
 SinglyLinkedListNode *singlyLinkedListGetHead(SinglyLinkedList *pList)

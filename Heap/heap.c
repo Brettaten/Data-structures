@@ -262,7 +262,7 @@ int heapLength(Heap *pHeap)
     return listLength(pHeap->listValue);
 }
 
-int heapSize(Heap *pHeap)
+int heapContentSize(Heap *pHeap)
 {
     if (pHeap == NULL)
     {
@@ -271,6 +271,10 @@ int heapSize(Heap *pHeap)
     }
 
     return listSize(pHeap->listValue);
+}
+
+int heapSize(){
+    return sizeof(Heap);
 }
 
 void heapFree(void *pHeap)

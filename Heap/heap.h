@@ -81,7 +81,14 @@ int heapLength(Heap *pHeap);
  * 
  * @return Success: the size | Failure: -1
  */
-int heapSize(Heap *pHeap);
+int heapContentSize(Heap *pHeap);
+
+/**
+ * Function that returns the size of a heap struct
+ * 
+ * @return Success: the size
+ */
+int heapSize();
 
 /**
  * Function used to free the passed heap

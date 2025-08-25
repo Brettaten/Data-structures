@@ -114,7 +114,15 @@ int singlyLinkedListLength(SinglyLinkedList *pList);
  * 
  * @return Success: size | Failure: -1
  */
-int singlyLinkedListSize(SinglyLinkedList *pList);
+int singlyLinkedListContentSize(SinglyLinkedList *pList);
+
+
+/**
+ * Function used to return the size of a singly linked list struct
+ * 
+ * @return Success: size
+ */
+int singlyLinkedListSize();
 
 /**
  * Function used to return the head of the list

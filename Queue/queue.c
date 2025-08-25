@@ -157,7 +157,7 @@ int queueLength(Queue *pQueue)
     return doublyLinkedListLength(pQueue->list);
 }
 
-int queueSize(Queue *pQueue)
+int queueContentSize(Queue *pQueue)
 {
     if (pQueue == NULL)
     {
@@ -166,6 +166,10 @@ int queueSize(Queue *pQueue)
     }
 
     return doublyLinkedListSize(pQueue->list);
+}
+
+int queueSize(){
+    return sizeof(Queue);
 }
 
 void queueFree(void *pQueue)
