@@ -265,6 +265,7 @@ char *stringReplace(char *pString, char *pStringDest, char *pStringSrc)
             {
                 newString[i] = pString[j];
             }
+            free(temp);
         }
     }
 
