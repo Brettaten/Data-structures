@@ -91,6 +91,7 @@ char *stringAddIndex(char *pString, char value, int index)
         if (st2 == -1)
         {
             printf("[ERROR] : Function stringSwap failed | stringAddIndex \n");
+            free(pString);
             return NULL;
         }
     }
@@ -138,7 +139,7 @@ char *stringCat(char *pStringDest, char *pStringSrc){
     int lengthSrc = strlen(pStringSrc);
     int lengthDest = strlen(pStringDest);
 
-    char *stringNew = (char *) malloc(sizeof(char *) * (lengthSrc + lengthDest + 2));
+    char *stringNew = (char *) malloc(sizeof(char) * (lengthSrc + lengthDest + 2));
     strcpy(stringNew, pStringDest);
     strcat(stringNew, pStringSrc);
 
@@ -226,8 +227,10 @@ char *stringReplace(char *pString, char *pStringDest, char *pStringSrc)
             {
                 len += lengthSrc;
                 i += lengthDest - 1;
+                free(temp);
                 continue;
             }
+            free(temp);
         }
         len++;
     }
