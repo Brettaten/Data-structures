@@ -239,7 +239,7 @@ char *stringReplace(char *pString, char *pStringDest, char *pStringSrc)
 
     char *newString = (char *)malloc(sizeof(char) * len);
 
-    for (int i = 0, j = 0; i < len - 1; i++, j++)
+    for (int i = 0, j = 0; i < len; i++, j++)
     {
         int end = j + lengthDest - 1;
 
