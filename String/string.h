@@ -48,6 +48,16 @@ char *stringAddIndex(char *pString, char value, int index);
 int stringSwap(char *pString, int index1, int index2);
 
 /**
+ * Function that concatenates the passed strings
+ * 
+ * @param pStringDest the pointer to the destination
+ * @param pStringSrc the pointer to the source
+ * 
+ * @return Success: the new String | Failure: NULL
+ */
+char *stringCat(char *pStringDest, char *pStringSrc);
+
+/**
  * Function that clears the passed string
  * 
  * @param pString the pointer to the string

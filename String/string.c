@@ -122,6 +122,29 @@ int stringSwap(char *pString, int index1, int index2)
     return 0;
 }
 
+char *stringCat(char *pStringDest, char *pStringSrc){
+    if (pStringDest == NULL)
+    {
+        printf("[ERROR] : String is null | stringCat \n");
+        return NULL;
+    }
+
+    if (pStringSrc == NULL)
+    {
+        printf("[ERROR] : String is null | stringCat \n");
+        return NULL;
+    }
+
+    int lengthSrc = strlen(pStringSrc);
+    int lengthDest = strlen(pStringDest);
+
+    char *stringNew = (char *) malloc(sizeof(char *) * (lengthSrc + lengthDest + 2));
+    strcpy(stringNew, pStringDest);
+    strcat(stringNew, pStringSrc);
+
+    return stringNew;
+}
+
 char *stringClear(char *pString)
 {
     if (pString == NULL)
