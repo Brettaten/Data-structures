@@ -123,6 +123,27 @@ int stringSwap(char *pString, int index1, int index2)
     return 0;
 }
 
+void *stringCopy(void *pString)
+{
+
+    char *cp = (char *)pString;
+    if (cp == NULL)
+    {
+        printf("[ERROR] : String is null | stringCopy \n");
+        return NULL;
+    }
+
+    char *stringCpy = stringCreate(cp);
+
+    if (stringCpy == NULL)
+    {
+        printf("[ERROR] : Function stringCreate failed | stringCopy \n");
+        return NULL;
+    }
+
+    return stringCpy;
+}
+
 char *stringCat(char *pStringDest, char *pStringSrc){
     if (pStringDest == NULL)
     {

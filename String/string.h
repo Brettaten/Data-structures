@@ -48,6 +48,19 @@ char *stringAddIndex(char *pString, char value, int index);
 int stringSwap(char *pString, int index1, int index2);
 
 /**
+ * Function that creates a deep copy of a string
+ * 
+ * @param pString the pointer to the string
+ * 
+ * @return Success: the copy of the string | Failure: NULL
+ * 
+ * @note Void datatypes are used for this function because one might
+ *      store this struct inside this another struct and thus function pointers
+ *      with void datatype are needed
+ */
+void *stringCopy(void *pString);
+
+/**
  * Function that concatenates the passed strings
  * 
  * @param pStringDest the pointer to the destination
