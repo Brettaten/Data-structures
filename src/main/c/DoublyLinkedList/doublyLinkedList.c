@@ -44,7 +44,7 @@ DoublyLinkedListNode *doublyLinkedListNodeCopy(DoublyLinkedList *pList, DoublyLi
  *
  * @return NULL
  */
-void freeNode(DoublyLinkedList *pList, DoublyLinkedListNode *pNode);
+void doublyLinkedListFreeNode(DoublyLinkedList *pList, DoublyLinkedListNode *pNode);
 
 typedef struct DoublyLinkedList
 {
@@ -376,7 +376,7 @@ int doublyLinkedListAddIndex(DoublyLinkedList *pList, void *value, int index)
                 pList->freeElement(cp);
             }
 
-            freeNode(pList, pNodeNew);
+            doublyLinkedListFreeNode(pList, pNodeNew);
             printf("[ERROR] : Function doublyLinkedListGetNode failed | doublyLinkedListAddIndex \n");
             return -1;
         }
@@ -471,7 +471,7 @@ int doublyLinkedListRemove(DoublyLinkedList *pList, int index)
         pNodeP = NULL;
         pNodeC = pList->head->next;
 
-        freeNode(pList, pList->head);
+        doublyLinkedListFreeNode(pList, pList->head);
         pList->head = pNodeC;
 
         if (pNodeC == NULL)
@@ -495,7 +495,7 @@ int doublyLinkedListRemove(DoublyLinkedList *pList, int index)
 
         pNodeC = pNodeP->next->next;
 
-        freeNode(pList, pNodeP->next);
+        doublyLinkedListFreeNode(pList, pNodeP->next);
         pNodeP->next = NULL;
         pNodeP->next = pNodeC;
 
@@ -703,7 +703,7 @@ void doublyLinkedListFree(void *pList)
     {
         DoublyLinkedListNode *pNodeTemp = pNode->next;
 
-        freeNode(cp, pNode);
+        doublyLinkedListFreeNode(cp, pNode);
         pNode = pNodeTemp;
     }
 
@@ -833,10 +833,10 @@ DoublyLinkedListNode *doublyLinkedListNodeCopy(DoublyLinkedList *pList, DoublyLi
     return copy;
 }
 
-void freeNode(DoublyLinkedList *pList, DoublyLinkedListNode *pNode)
+void doublyLinkedListFreeNode(DoublyLinkedList *pList, DoublyLinkedListNode *pNode)
 {
     if(pNode == NULL){
-        printf("[INFO] : Pointer to node is NULL | freeNode \n");
+        printf("[INFO] : Pointer to node is NULL | doublyLinkedListFreeNode \n");
         return;
     }
 

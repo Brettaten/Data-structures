@@ -44,7 +44,7 @@ SinglyLinkedListNode *singlyLinkedListNodeCopy(SinglyLinkedList *pList, SinglyLi
  *
  * @return NULL.
  */
-void freeNode(SinglyLinkedList *pList, SinglyLinkedListNode *pNode);
+void singlyLinkedListFreeNode(SinglyLinkedList *pList, SinglyLinkedListNode *pNode);
 
 typedef struct SinglyLinkedList
 {
@@ -265,7 +265,7 @@ int singlyLinkedListAdd(SinglyLinkedList *pList, void *value)
 
         if (node == NULL)
         {
-            freeNode(pList, pNodeNew);
+            singlyLinkedListFreeNode(pList, pNodeNew);
             printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListAdd \n");
             return -1;
         }
@@ -359,7 +359,7 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 
         if (pNodeP == NULL)
         {
-            freeNode(pList, pNodeNew);
+            singlyLinkedListFreeNode(pList, pNodeNew);
             printf("[ERROR] : Function singlyLinkedListGetNode failed | singlyLinkedListAddIndex \n");
             return -1;
         }
@@ -443,7 +443,7 @@ int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
         pNodeP = NULL;
         pNodeC = pList->head->next;
 
-        freeNode(pList, pList->head);
+        singlyLinkedListFreeNode(pList, pList->head);
         pList->head = pNodeC;
     }
     else
@@ -458,7 +458,7 @@ int singlyLinkedListRemove(SinglyLinkedList *pList, int index)
 
         pNodeC = pNodeP->next->next;
 
-        freeNode(pList, pNodeP->next);
+        singlyLinkedListFreeNode(pList, pNodeP->next);
         pNodeP->next = NULL;
         pNodeP->next = pNodeC;
     }
@@ -635,7 +635,7 @@ void singlyLinkedListFree(void *pList)
     {
         SinglyLinkedListNode *pNodeTemp = pNode->next;
 
-        freeNode(cp, pNode);
+        singlyLinkedListFreeNode(cp, pNode);
         pNode = pNodeTemp;
     }
 
@@ -750,11 +750,11 @@ SinglyLinkedListNode *singlyLinkedListNodeCopy(SinglyLinkedList *pList, SinglyLi
     return copy;
 }
 
-void freeNode(SinglyLinkedList *pList, SinglyLinkedListNode *pNode)
+void singlyLinkedListFreeNode(SinglyLinkedList *pList, SinglyLinkedListNode *pNode)
 {
     if (pNode == NULL)
     {
-        printf("[INFO] : Pointer to node is NULL | freeNode \n");
+        printf("[INFO] : Pointer to node is NULL | singlyLinkedListFreeNode \n");
         return;
     }
 

@@ -12,7 +12,7 @@ typedef struct DoublyLinkedList DoublyLinkedList;
 typedef struct DoublyLinkedListNode DoublyLinkedListNode;
 
 /**
- * Function that allocated memory for a doubly linked list struct
+ * Function that allocates memory for a doubly linked list struct
  *
  * @param size the size of the elements that will be stored in the list
  * @param copyElement pointer to a function that deep copies an element, pass NULL for elements, where a shallow copy is sufficient
