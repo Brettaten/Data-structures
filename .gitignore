@@ -1,9 +1,7 @@
 *.exe
 *.bat
-**/test.c
 
 .vscode/*
 .VSCodeCounter/*
 
 Hashmap/
-BinarySearchTree/
