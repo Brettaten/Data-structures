@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "binarySearchTree.h"
 #include "../Stack/stack.h"
@@ -21,7 +22,7 @@
  *
  * @note The returned pointer has to be freed by the caller
  */
-BinarySearchTreeNode *binaryTreeNodeCreate(void *value, int key);
+BinarySearchTreeNode *binarySearchTreeNodeCreate(BinarySearchTree *pTree, void *value, int key);
 
 /**
  * Function that fixes the tree after insertion
@@ -87,6 +88,17 @@ void rotateRight(BinarySearchTree *pTree, BinarySearchTreeNode *pNodeV);
 BinarySearchTreeNode *inOrderSuccessor(BinarySearchTreeNode *pNode);
 
 /**
+ * Function used to copy a node
+ *
+ * @param pNode pointer to the node
+ *
+ * @return The copy of the passed node
+ *
+ * @note The returned pointer is a deep copy and thus has to be freed by the caller
+ */
+BinarySearchTreeNode *binarySearchTreeCopyNode(BinarySearchTreeNode *pNode);
+
+/**
  * Function used to free a node
  *
  * @param pNode pointer to the node
@@ -110,6 +122,8 @@ typedef struct BinarySearchTreeNode
     void *value;
     int key;
     int color;
+    void *(*copyElement)(void *);
+    void (*freeElement)(void *);
 } BinarySearchTreeNode;
 
 enum Color
@@ -210,7 +224,18 @@ void binarySearchTreeNodeSetValue(BinarySearchTreeNode *pNode, void *value)
 
 void binarySearchTreeInsert(BinarySearchTree *pTree, void *value, int key)
 {
-    BinarySearchTreeNode *pNode = binaryTreeNodeCreate(value, key);
+    if (pTree == NULL)
+    {
+        printf("[ERROR] : Tree is null | binarySearchTreeInsert \n");
+        return;
+    }
+    if (value == NULL)
+    {
+        printf("[ERROR] : Value is null | binarySearchTreeInsert \n");
+        return;
+    }
+
+    BinarySearchTreeNode *pNode = binarySearchTreeNodeCreate(pTree, value, key);
 
     if (pTree->root == NULL)
     {
@@ -294,11 +319,17 @@ BinarySearchTreeNode *binarySearchTreeGet(BinarySearchTree *pTree, int key)
 
 void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
 {
+    if (pTree == NULL)
+    {
+        printf("[ERROR] : Tree is null | binarySearchTreeRemove \n");
+        return;
+    }
+
     BinarySearchTreeNode *pNode = binarySearchTreeGet(pTree, key);
 
     if (pNode == NULL)
     {
-        printf("Node not found!");
+        printf("[ERROR] : There is no Node with the passed key in the tree | binarySearchTreeRemove \n");
         return;
     }
 
@@ -308,6 +339,7 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
         {
             pTree->root = NULL;
             binarySearchTreeFreeNode(pNode);
+            pTree->length--;
             return;
         }
         else if (pNode == pNode->parent->left)
@@ -325,7 +357,7 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
         }
     }
 
-    else if (pNode->left != NULL)
+    else if (pNode->left != NULL && pNode->right == NULL)
     {
         if (pNode->parent == NULL)
         {
@@ -333,6 +365,7 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
             pTree->root = pNode->left;
             pNode->left->color = BLACK;
             binarySearchTreeFreeNode(pNode);
+            pTree->length--;
             return;
         }
         else if (pNode == pNode->parent->left)
@@ -345,17 +378,9 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
             pNode->parent->right = pNode->left;
             pNode->left->parent = pNode->parent;
         }
-
-        if (pNode->color == RED || pNode->left->color == RED)
-        {
-            pNode->left->color = BLACK;
-        }
-        else
-        {
-            fixDeletion(pTree, pNode);
-        }
+        pNode->left->color = BLACK;
     }
-    else if (pNode->right != NULL)
+    else if (pNode->right != NULL && pNode->left == NULL)
     {
         if (pNode->parent == NULL)
         {
@@ -363,6 +388,7 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
             pTree->root = pNode->right;
             pNode->right->color = BLACK;
             binarySearchTreeFreeNode(pNode);
+            pTree->length--;
             return;
         }
         else if (pNode == pNode->parent->left)
@@ -375,14 +401,7 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
             pNode->parent->right = pNode->right;
             pNode->right->parent = pNode->parent;
         }
-        if (pNode->color == RED || pNode->right->color == RED)
-        {
-            pNode->right->color = BLACK;
-        }
-        else
-        {
-            fixDeletion(pTree, pNode);
-        }
+        pNode->right->color = BLACK;
     }
     else
     {
@@ -402,14 +421,7 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
             pSuccessor->parent->left = pSuccessor->right;
             pSuccessor->right->parent = pSuccessor->parent;
 
-            if (pSuccessor->color == RED || pSuccessor->right->color == RED)
-            {
-                pSuccessor->right->color = BLACK;
-            }
-            else
-            {
-                fixDeletion(pTree, pSuccessor);
-            }
+            pSuccessor->right->color = BLACK;
         }
         else
         {
@@ -423,15 +435,134 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key)
         pNode = pSuccessor;
     }
     binarySearchTreeFreeNode(pNode);
+    pTree->length--;
 }
 
-void binarySearchTreeFree(BinarySearchTree *pTree)
+void *binarySearchTreeCopy(void *pTree)
 {
-    // Stack *pStack = stackCreate(sizeof(BinarySearchTreeNode), )
+    BinarySearchTree *cp = (BinarySearchTree *)pTree;
+
+    if (cp == NULL)
+    {
+        printf("[ERROR] : Tree is null | binarySearchTreeCopy \n");
+        return NULL;
+    }
+
+    BinarySearchTree *copy = (BinarySearchTree *)malloc(sizeof(BinarySearchTree));
+
+    if (copy == NULL)
+    {
+        printf("[ERROR] : Memory allocation failed | binarySearchTreeCopy \n");
+        return NULL;
+    }
+
+    copy->copyElement = cp->copyElement;
+    copy->freeElement = cp->freeElement;
+    copy->length = cp->length;
+    copy->size = cp->size;
+
+    BinarySearchTreeNode *pNode = cp->root;
+    BinarySearchTreeNode *pCopy = binarySearchTreeCopyNode(pNode);
+    copy->root = pCopy;
+
+    Stack *pStackNode = stackCreate(sizeof(BinarySearchTreeNode), cp->copyElement, cp->freeElement);
+    stackPush(pStackNode, pNode);
+
+    Stack *pStackCopy = stackCreate(sizeof(BinarySearchTreeNode*), NULL, NULL);
+    stackPush(pStackCopy, &pCopy);
+
+    while (stackLength(pStackNode) > 0)
+    {
+        BinarySearchTreeNode *tempNode = (BinarySearchTreeNode *)(stackPop(pStackNode));
+        pNode = tempNode;
+
+        BinarySearchTreeNode **tempCopy = (BinarySearchTreeNode **)(stackPop(pStackCopy));
+        pCopy = *tempCopy;
+
+        if (pNode->left != NULL)
+        {
+            pCopy->left = binarySearchTreeCopyNode(pNode->left);
+            pCopy->left->parent = pCopy;
+
+            stackPush(pStackNode, pNode->left);
+            stackPush(pStackCopy, &pCopy->left);
+        }
+        if (pNode->right != NULL)
+        {
+            pCopy->right = binarySearchTreeCopyNode(pNode->right);
+            pCopy->right->parent = pCopy;
+
+            stackPush(pStackNode, pNode->right);
+            stackPush(pStackCopy, &pCopy->right);
+        }
+
+        binarySearchTreeFreeNode(tempNode);
+        free(tempCopy);
+    }
+
+    stackFree(pStackNode);
+    stackFree(pStackCopy);
+
+    return copy;
+}
+
+void binarySearchTreeFree(void *pTree)
+{
+    BinarySearchTree *cp = (BinarySearchTree *)pTree;
+
+    if (cp == NULL)
+    {
+        printf("[ERROR] : Tree is null | binarySearchTreeFree \n");
+        return;
+    }
+
+    if (cp->root == NULL)
+    {
+        free(pTree);
+        return;
+    }
+
+    BinarySearchTreeNode *pNode = cp->root;
+
+    Stack *pStack = stackCreate(sizeof(BinarySearchTreeNode *), NULL, NULL);
+    stackPush(pStack, &pNode);
+
+    while (stackLength(pStack) > 0)
+    {
+        BinarySearchTreeNode **temp = (BinarySearchTreeNode **)(stackPop(pStack));
+        pNode = *temp;
+
+        if (pNode->left != NULL)
+        {
+            stackPush(pStack, &pNode->left);
+        }
+        if (pNode->right != NULL)
+        {
+            stackPush(pStack, &pNode->right);
+        }
+
+        binarySearchTreeFreeNode(pNode);
+        free(temp);
+    }
+
+    free(cp);
+
+    stackFree(pStack);
 }
 
 void fixInsert(BinarySearchTree *pTree, BinarySearchTreeNode *pNode)
 {
+    if (pTree == NULL)
+    {
+        printf("[ERROR] : Tree is null | fixInsert \n");
+        return;
+    }
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Node is null | fixInsert \n");
+        return;
+    }
+
     while (pNode != pTree->root && pNode->parent->color == RED)
     {
         if (pNode->parent == pNode->parent->parent->left)
@@ -484,17 +615,28 @@ void fixInsert(BinarySearchTree *pTree, BinarySearchTreeNode *pNode)
 
 void fixDeletion(BinarySearchTree *pTree, BinarySearchTreeNode *pNode)
 {
-    BinarySearchTreeNode *pTemp = pNode;
-    int isDoubleBlack = 1;
+    if (pTree == NULL)
+    {
+        printf("[ERROR] : Tree is null | fixDeletion \n");
+        return;
+    }
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Node is null | fixDeletion \n");
+        return;
+    }
 
-    while (pNode != pTree->root || isDoubleBlack == 1)
+    BinarySearchTreeNode *pTemp = pNode;
+    bool isDoubleBlack = true;
+
+    while (pNode->parent != NULL && isDoubleBlack)
     {
         BinarySearchTreeNode *pSibling;
-        int isRight = 0;
+        bool isRight = false;
         if (pNode = pNode->parent->left)
         {
             pSibling = pNode->parent->right;
-            isRight = 1;
+            isRight = true;
         }
         else
         {
@@ -507,11 +649,11 @@ void fixDeletion(BinarySearchTree *pTree, BinarySearchTreeNode *pNode)
         {
             pNode->parent->color = BLACK;
             pSibling->color = RED;
-            isDoubleBlack = 0;
+            isDoubleBlack = false;
         }
         else if (deletionCase == 6)
         {
-            if (isRight == 1)
+            if (isRight)
             {
                 rotateLeft(pTree, pNode->parent);
                 pSibling->right->color = BLACK;
@@ -525,7 +667,7 @@ void fixDeletion(BinarySearchTree *pTree, BinarySearchTreeNode *pNode)
             pNode->parent->color = pSibling->color;
             pSibling->color = pColor;
 
-            isDoubleBlack = 0;
+            isDoubleBlack = false;
         }
         else if (deletionCase == 2)
         {
@@ -534,24 +676,22 @@ void fixDeletion(BinarySearchTree *pTree, BinarySearchTreeNode *pNode)
         }
         else if (deletionCase == 3)
         {
-            if (isRight == 1)
+            if (isRight)
             {
                 rotateLeft(pTree, pNode->parent);
-                int sColor = pSibling->color;
-                pSibling->color = pSibling->left->color;
-                pSibling->left->color = sColor;
+                pSibling->color = BLACK;
+                pSibling->left->color = RED;
             }
             else
             {
                 rotateRight(pTree, pNode->parent);
-                int sColor = pSibling->color;
-                pSibling->color = pSibling->right->color;
-                pSibling->right->color = sColor;
+                pSibling->color = BLACK;
+                pSibling->right->color = RED;
             }
         }
         else if (deletionCase == 5)
         {
-            if (isRight == 1)
+            if (isRight)
             {
                 rotateRight(pTree, pSibling);
             }
@@ -559,10 +699,14 @@ void fixDeletion(BinarySearchTree *pTree, BinarySearchTreeNode *pNode)
             {
                 rotateLeft(pTree, pSibling);
             }
-            int sColor = pSibling->color;
-            pSibling->color = pSibling->parent->color;
-            pSibling->parent->color = sColor;
+            pSibling->color = RED;
+            pSibling->parent->color = BLACK;
         }
+    }
+
+    if (pNode->parent == NULL)
+    {
+        pTree->root = pNode;
     }
     pNode = pTemp;
     pTree->root->color = BLACK;
@@ -579,11 +723,11 @@ int getCase(BinarySearchTreeNode *pNode, BinarySearchTreeNode *pSibling, int isR
     }
     else if (pSibling != NULL && pSibling->color == BLACK)
     {
-        if ((isRight == 1 && getColor(pSibling->right) == RED) || (isRight == 0 && getColor(pSibling->left) == RED))
+        if ((isRight == true && getColor(pSibling->right) == RED) || (isRight == false && getColor(pSibling->left) == RED))
         {
             return 6;
         }
-        else if ((isRight == 1 && getColor(pSibling->left) == RED && getColor(pSibling->right) == BLACK) || (isRight == 0 && getColor(pSibling->right) == RED && getColor(pSibling->left) == BLACK))
+        else if ((isRight == true && getColor(pSibling->left) == RED && getColor(pSibling->right) == BLACK) || (isRight == false && getColor(pSibling->right) == RED && getColor(pSibling->left) == BLACK))
         {
             return 5;
         }
@@ -599,10 +743,19 @@ int getCase(BinarySearchTreeNode *pNode, BinarySearchTreeNode *pSibling, int isR
     {
         return 3;
     }
+
+    printf("[ERROR] : No case was found | getCase \n");
+    return -1;
 }
 
 int getColor(BinarySearchTreeNode *pNode)
 {
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Node can not be null | getColor \n");
+        return -1;
+    }
+
     if (pNode == NULL || pNode->color == BLACK)
     {
         return BLACK;
@@ -612,6 +765,22 @@ int getColor(BinarySearchTreeNode *pNode)
 
 void rotateLeft(BinarySearchTree *pTree, BinarySearchTreeNode *pNodeU)
 {
+    if (pTree == NULL)
+    {
+        printf("[ERROR] : The tree is null | rotateLeft \n");
+        return;
+    }
+    if (pNodeU == NULL)
+    {
+        printf("[ERROR] : The node is null | rotateLeft \n");
+        return;
+    }
+    if (pNodeU->right == NULL)
+    {
+        printf("[ERROR] : The node needs a right child to perform a left rotation | rotateLeft \n");
+        return;
+    }
+
     BinarySearchTreeNode *pNodeV = pNodeU->right;
     pNodeU->right = pNodeV->left;
 
@@ -639,6 +808,22 @@ void rotateLeft(BinarySearchTree *pTree, BinarySearchTreeNode *pNodeU)
 
 void rotateRight(BinarySearchTree *pTree, BinarySearchTreeNode *pNodeV)
 {
+    if (pTree == NULL)
+    {
+        printf("[ERROR] : The tree is null | rotateLeft \n");
+        return;
+    }
+    if (pNodeV == NULL)
+    {
+        printf("[ERROR] : The node is null | rotateLeft \n");
+        return;
+    }
+    if (pNodeV->left == NULL)
+    {
+        printf("[ERROR] : The node needs a left child to perform a left rotation | rotateLeft \n");
+        return;
+    }
+
     BinarySearchTreeNode *pNodeU = pNodeV->left;
     pNodeV->left = pNodeU->right;
 
@@ -668,26 +853,36 @@ BinarySearchTreeNode *inOrderSuccessor(BinarySearchTreeNode *pNode)
 {
     if (pNode->right == NULL)
     {
-        printf("The in-order successor for the given node does not exist!");
+        printf("[ERROR] : The in-order successor for the given node does not exist | inOrderSuccessor \n");
         return NULL;
     }
 
-    pNode = pNode->right;
+    BinarySearchTreeNode *successor = pNode->right;
 
-    while (pNode->left != NULL)
+    while (successor->left != NULL)
     {
-        pNode = pNode->left;
+        successor = successor->left;
     }
-    return pNode;
+    return successor;
 }
 
-BinarySearchTreeNode *binaryTreeNodeCreate(void *value, int key)
+BinarySearchTreeNode *binarySearchTreeNodeCreate(BinarySearchTree *pTree, void *value, int key)
 {
+    if (pTree == NULL)
+    {
+        printf("[ERROR] : Tree is null | binarySearchTreeNodeCreate \n");
+        return NULL;
+    }
+    if (value == NULL)
+    {
+        printf("[ERROR] : Value is null | binarySearchTreeNodeCreate \n");
+        return NULL;
+    }
     BinarySearchTreeNode *pNode = (BinarySearchTreeNode *)malloc(sizeof(BinarySearchTreeNode));
 
     if (pNode == NULL)
     {
-        printf("Memory allocation failed!");
+        printf("[ERROR] : Memory allocation failed | binarySearchTreeNodeCreate \n");
         return NULL;
     }
     pNode->key = key;
@@ -696,16 +891,61 @@ BinarySearchTreeNode *binaryTreeNodeCreate(void *value, int key)
     pNode->left = NULL;
     pNode->right = NULL;
     pNode->parent = NULL;
+    pNode->copyElement = pTree->copyElement;
+    pNode->freeElement = pTree->freeElement;
 
     return pNode;
 }
 
+BinarySearchTreeNode *binarySearchTreeCopyNode(BinarySearchTreeNode *pNode)
+{
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Node is null | binarySearchTreeCopyNode \n");
+        return NULL;
+    }
+
+    void *value = pNode->copyElement(pNode->value);
+
+    BinarySearchTreeNode *pCopy = (BinarySearchTreeNode *)malloc(sizeof(BinarySearchTreeNode));
+
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Memory allocation failed | binarySearchTreeNodeCreate \n");
+        return NULL;
+    }
+
+    pNode->key = pNode->key;
+    pNode->value = value;
+    pCopy->color = pNode->color;
+    pCopy->left = pNode->left;
+    pCopy->right = pNode->right;
+    pCopy->parent = pNode->parent;
+    pNode->copyElement = pNode->copyElement;
+    pNode->freeElement = pNode->freeElement;
+
+    return pCopy;
+}
+
 void binarySearchTreeFreeNode(BinarySearchTreeNode *pNode)
 {
+    if (pNode == NULL)
+    {
+        printf("[ERROR] : Node is null | binarySearchTreeFreeNode \n");
+        return;
+    }
+
     pNode->left = NULL;
     pNode->right = NULL;
     pNode->parent = NULL;
 
-    free(pNode->value);
+    if (pNode->freeElement == NULL)
+    {
+        free(pNode->value);
+    }
+    else
+    {
+        pNode->freeElement(pNode->value);
+    }
     free(pNode);
 }

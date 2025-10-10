@@ -121,6 +121,19 @@ BinarySearchTreeNode *binarySearchTreeGet(BinarySearchTree *pTree, int key);
 void binarySearchTreeRemove(BinarySearchTree *pTree, int key);
 
 /**
+ * Function used to copy the passed tree
+ * 
+ * @param pTree pointer to the tree
+ * 
+ * @return Success: Pointer to the copied tree | Failure: NULL
+ * 
+ * @note Void datatypes are used for this function because one might
+ *      store this struct inside this struct and thus function pointers
+ *      with void datatype are needed
+ */
+void *binarySearchTreeCopy(void *pTree);
+
+/**
  * Function used to free the passed tree
  *
  * @param pTree pointer to the tree
@@ -130,4 +143,4 @@ void binarySearchTreeRemove(BinarySearchTree *pTree, int key);
  *      with void datatype are needed
  * 
  */
-void binarySearchTreeFree(BinarySearchTree *pTree);
+void binarySearchTreeFree(void *pTree);
