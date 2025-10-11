@@ -7,4 +7,5 @@ Just some basic C datastructures, including:
 - queue
 - stack
 - heap
+- red-black tree
 - string
