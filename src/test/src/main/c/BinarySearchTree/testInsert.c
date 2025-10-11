@@ -25,9 +25,12 @@ void testbinarySearchTreeInsert()
     binarySearchTreeInsert(pTree, &value, 1);
 
     int value2 = 10;
-    binarySearchTreeInsert(pTree, &value, 2);
+    binarySearchTreeInsert(pTree, &value2, 2);
 
-    assert(called == false);
+    int value3 = 10;
+    binarySearchTreeInsert(pTree, &value3, 3);
+
+    assert(called == true);
 }
 
 void testbinarySearchTreeFree()

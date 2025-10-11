@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 /**
  * Struct that represents a binary search tree
  *
@@ -69,17 +71,19 @@ BinarySearchTreeNode *binarySearchTreeNodeGetParent(BinarySearchTreeNode *pNode)
 /**
  * Function that returns the value of the passed node
  * 
+ * @param pTree pointer to the tree
  * @param pNode pointer to the node
  * 
  * @return Success: Pointer to the value | Failure: NULL
  * 
  * @note The returned pointer is a deep copy and thus, has to be freed by the caller
  */
-void *binarySearchTreeNodeGetValue(BinarySearchTreeNode *pNode);
+void *binarySearchTreeNodeGetValue(BinarySearchTree *pTree, BinarySearchTreeNode *pNode);
 
 /**
  * Function that sets the value of the passed node
  * 
+ * @param pTree pointer to the tree
  * @param pNode pointer to the node
  * @param value pointer to the value
  * 
@@ -87,7 +91,7 @@ void *binarySearchTreeNodeGetValue(BinarySearchTreeNode *pNode);
  * 
  * @note The returned pointer is a deep copy and thus, has to be freed by the caller
  */
-void binarySearchTreeNodeSetValue(BinarySearchTreeNode *pNode, void *value);
+void binarySearchTreeNodeSetValue(BinarySearchTree *pTree, BinarySearchTreeNode *pNode, void *value);
 
 /**
  * Function that inserts a node
@@ -144,3 +148,37 @@ void *binarySearchTreeCopy(void *pTree);
  * 
  */
 void binarySearchTreeFree(void *pTree);
+
+/**
+ * Function used to return the length of the tree
+ *
+ * @param pTree pointer to the tree
+ *
+ * @return Success: length | Failure: -1
+ */
+int binarySearchTreeLength(BinarySearchTree *pTree);
+
+/**
+ * Function used to return the size of the data that the tree stores
+ *
+ * @param pTree pointer to the tree
+ *
+ * @return Success: size | Failure: -1
+ */
+int binarySearchTreeContentSize(BinarySearchTree *pTree);
+
+/**
+ * Function used to return the size of a binary search tree struct
+ *
+ * @return Success: size
+ */
+int binarySearchTreeSize();
+
+/**
+ * Test Function that checks if the passed tree is a red black tree
+ * 
+ * @param pTree pointer to the tree
+ * 
+ * @return Success: true | Failure: false
+ */
+bool isRedBlackTree(BinarySearchTree *pTree);
