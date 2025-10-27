@@ -7,6 +7,11 @@
 typedef struct HashMap HashMap;
 
 /**
+ * Struct that represents an entry of a hashmap
+ */
+typedef struct HashMapNode HashMapNode;
+
+/**
  * Function that allocates memory for a hash map struct
  *
  * @param sizeKey the size of the keys that will be stored in the hash map
@@ -73,6 +78,15 @@ int hashMapAdd(HashMap *pMap, void *value, void *key);
 int hashMapRemove(HashMap *pMap, void *key);
 
 /**
+ * Function used to transform the passed hash map to a list
+ * 
+ * @param pMap the pointer to the hash map
+ * 
+ * @return Success: pointer to a list | Failure: NULL
+ */
+List *hashMapToList(HashMap *pMap);
+
+/**
  * Function used to return the length of the hash map
  *
  * @param pMap pointer to the hash map
@@ -129,3 +143,54 @@ void *hashMapCopy(void *pMap);
  *      with void datatype are needed
  */
 void hashMapFree(void *pMap);
+
+/**
+ * Function used to retrieve the key of a hash map node
+ * 
+ * @param pMap pointer to the hash map
+ * @param pNode pointer to the node
+ * 
+ * @return Success: pointer to the key | Failure: NULL
+ * 
+ * @note The returned pointer is a deep copy and thus, has to be freed by the caller
+ */
+void *hashMapNodeGetKey(HashMap *pMap, HashMapNode *pNode);
+
+/**
+ * Function used to retrieve the value of a hash map node
+ * 
+ * @param pMap pointer to the hash map
+ * @param pNode pointer to the node
+ * 
+ * @return Success: pointer to the value | Failure: NULL
+ * 
+ * @note The returned pointer is a deep copy and thus, has to be freed by the caller
+ */
+void *hashMapNodeGetValue(HashMap *pMap, HashMapNode *pNode);
+
+/**
+ * Function used to retrieve the hash of a hash map node
+ * 
+ * @param pNode pointer to the node
+ * 
+ * @return Success: hash | Failure: -1
+ */
+int64_t hashMapNodeGetHash(HashMapNode *pNode);
+
+/**
+ * Funcion used to create a deep copy of the passed HashMapNode
+ *
+ * @param pMap the pointer to the hash map
+ * @param pNode the pointer to the node
+ *
+ * @return Success: the deep copy | Failure: NULL
+ */
+HashMapNode *hashMapNodeCopy(HashMap *pMap, HashMapNode *pNode);
+
+/**
+ * Function used to free the passed HashMapNode
+ *
+ * @param pMap the pointer to the hash map
+ * @param pNode the pointer to the node
+ */
+void hashMapNodeFree(HashMap *pMap, HashMapNode *pNode);
