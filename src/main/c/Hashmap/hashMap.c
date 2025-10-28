@@ -151,6 +151,32 @@ void *hashMapGet(HashMap *pMap, void *key)
         printf("[ERROR] : key is null | hashMapGet \n");
         return NULL;
     }
+
+    int64_t hashCode = hash(pMap, key, pMap->sizeKey);
+    int hashValue = hashCode % pMap->length;
+
+    SinglyLinkedList *pList = (SinglyLinkedList *)listGet(pMap->list, hashValue);
+    SinglyLinkedListNode *pNode = singlyLinkedListGetHead(pList);
+
+    if(pNode != NULL){
+        do{
+            HashMapNode *temp = (HashMapNode *)singlyLinkedListNodeGet(pList, pNode);
+            if (equals(pMap, key, temp->key, pMap->sizeKey))
+            {
+                void *value = hashMapNodeGetValue(pMap, temp);
+
+                hashMapNodeFree(pMap, temp);
+                singlyLinkedListFree(pList);
+
+                return value;
+            }
+
+            hashMapNodeFree(pMap, temp);
+        } while((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
+    }
+    singlyLinkedListFree(pList);
+
+    return NULL;
 }
 
 int hashMapSet(HashMap *pMap, void *value, void *key)
