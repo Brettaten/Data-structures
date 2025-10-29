@@ -43,7 +43,7 @@ int64_t hash(HashMap *pMap, void *value, int size);
 
 /**
  * Function used to insert one node into the hash map
- * 
+ *
  * @param pMap pointer to the hash map
  * @param hashValue the index
  * @param newNode the node that should be inserted
@@ -158,8 +158,10 @@ void *hashMapGet(HashMap *pMap, void *key)
     SinglyLinkedList *pList = (SinglyLinkedList *)listGet(pMap->list, hashValue);
     SinglyLinkedListNode *pNode = singlyLinkedListGetHead(pList);
 
-    if(pNode != NULL){
-        do{
+    if (pNode != NULL)
+    {
+        do
+        {
             HashMapNode *temp = (HashMapNode *)singlyLinkedListNodeGet(pList, pNode);
             if (equals(pMap, key, temp->key, pMap->sizeKey))
             {
@@ -172,7 +174,7 @@ void *hashMapGet(HashMap *pMap, void *key)
             }
 
             hashMapNodeFree(pMap, temp);
-        } while((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
+        } while ((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
     }
     singlyLinkedListFree(pList);
 
@@ -196,6 +198,44 @@ int hashMapSet(HashMap *pMap, void *value, void *key)
         printf("[ERROR] : key is null | hashMapSet \n");
         return -1;
     }
+
+    int64_t hashCode = hash(pMap, key, pMap->sizeKey);
+    int hashValue = hashCode % pMap->length;
+
+    HashMapNode *newNode = hashMapCreateNode(key, value, hashCode);
+
+    SinglyLinkedList *pList = (SinglyLinkedList *)listGet(pMap->list, hashValue);
+    SinglyLinkedListNode *pNode = singlyLinkedListGetHead(pList);
+
+    if (pNode != NULL)
+    {
+        do
+        {
+            HashMapNode *temp = (HashMapNode *)singlyLinkedListNodeGet(pList, pNode);
+            if (equals(pMap, key, temp->key, pMap->sizeKey))
+            {
+                int st1 = singlyLinkedListNodeSet(pList, pNode, newNode);
+
+                if (st1 == -1)
+                {
+                    printf("[ERROR] : function singlyLinkedListNodeSet failed | hashMapSet \n");
+                    return -1;
+                }
+
+                hashMapNodeFree(pMap, temp);
+                hashMapNodeFree(pMap, newNode);
+                singlyLinkedListFree(pList);
+
+                return 0;
+            }
+
+            hashMapNodeFree(pMap, temp);
+        } while ((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
+    }
+    singlyLinkedListFree(pList);
+    hashMapNodeFree(pMap, newNode);
+
+    return -1;
 }
 
 int hashMapAdd(HashMap *pMap, void *value, void *key)
@@ -224,7 +264,8 @@ int hashMapAdd(HashMap *pMap, void *value, void *key)
     int st1 = simpleInsert(pMap, hashValue, newNode);
     hashMapNodeFree(pMap, newNode);
 
-    if(st1 == -1){
+    if (st1 == -1)
+    {
         printf("[ERROR] : Function simpleInsert failed | hashMapAdd \n");
         return -1;
     }
@@ -253,6 +294,44 @@ int hashMapRemove(HashMap *pMap, void *key)
         printf("[ERROR] : key is null | hashMapRemove \n");
         return -1;
     }
+
+    int64_t hashCode = hash(pMap, key, pMap->sizeKey);
+    int hashValue = hashCode % pMap->length;
+
+    SinglyLinkedList *pList = (SinglyLinkedList *)listGet(pMap->list, hashValue);
+    SinglyLinkedListNode *pNode = singlyLinkedListGetHead(pList);
+
+    int counter = 0;
+
+    if (pNode != NULL)
+    {
+        do
+        {
+            HashMapNode *temp = (HashMapNode *)singlyLinkedListNodeGet(pList, pNode);
+            if (equals(pMap, key, temp->key, pMap->sizeKey))
+            {
+                int st1 = singlyLinkedListRemove(pList, counter);
+
+                if(st1 == -1){
+                    printf("[ERROR] : function singlyLinkedListRemove failed | hashMapRemove \n");
+                    return -1;
+                }
+
+                pMap->size--;
+
+                hashMapNodeFree(pMap, temp);
+                singlyLinkedListFree(pList);
+
+                return 0;
+            }
+
+            hashMapNodeFree(pMap, temp);
+            counter++;
+        } while ((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
+    }
+    singlyLinkedListFree(pList);
+
+    return -1;
 }
 
 List *hashMapToList(HashMap *pMap)
@@ -538,7 +617,7 @@ int64_t hash(HashMap *pMap, void *value, int size)
 
 int simpleInsert(HashMap *pMap, int hashValue, HashMapNode *newNode)
 {
-    SinglyLinkedList *pList = (SinglyLinkedList *)listGet(pMap->list, hashValue); 
+    SinglyLinkedList *pList = (SinglyLinkedList *)listGet(pMap->list, hashValue);
     SinglyLinkedListNode *pNode = singlyLinkedListGetHead(pList);
 
     if (pNode == NULL)
@@ -617,7 +696,7 @@ int resizeHashMap(HashMap *pMap)
         return -1;
     }
 
-    List *pCopy = hashMapToList(pMap); 
+    List *pCopy = hashMapToList(pMap);
     int newLength = pMap->length * 2;
 
     HashMap *newMap = hashMapCreate(pMap->sizeKey, pMap->copyKey, pMap->freeKey, pMap->sizeValue, pMap->copyValue, pMap->freeValue, pMap->hash, pMap->equals);
@@ -649,7 +728,8 @@ int resizeHashMap(HashMap *pMap)
         int st1 = simpleInsert(pMap, hashValue, tempNode);
         hashMapNodeFree(pMap, tempNode);
 
-        if(st1 == -1){
+        if (st1 == -1)
+        {
             printf("[ERROR] : Function simpleInsert failed | resizeHashMap \n");
             return -1;
         }
