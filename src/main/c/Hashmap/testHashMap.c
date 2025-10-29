@@ -10,27 +10,26 @@ typedef struct BigObj
     int id;
 } BigObj;
 
-// void add(BinarySearchTree *pBinarySearchTree);
-// void addBig(BinarySearchTree *pBinarySearchTree, char *cp);
-// void *copyBig(void *big);
-// void freeBig(void *big);
+void add(HashMap *pMap);
+void addBig(HashMap *pMap, char *cp);
+void *copyBig(void *big);
+void freeBig(void *big);
 
 int main()
 {
-
-
+    HashMap *pMap = hashMapCreate(sizeof(int), NULL, NULL, sizeof(int), NULL, NULL, NULL, NULL);
+    add(pMap);
 }
 
-// void add(BinarySearchTree *pBinarySearchTree)
-// {
-//     for (int i = 0; i < 15; i++)
-//     {
-//         binarySearchTreeInsert(pBinarySearchTree, &i, i);
-//         printf("%s\n", isRedBlackTree(pBinarySearchTree) ? "true" : "false");
-//     }
-// }
+void add(HashMap *pMap)
+{
+    for (int i = 0; i < 15; i++)
+    {
+        hashMapAdd(pMap, &i, &i);
+    }
+}
 
-// void addBig(BinarySearchTree *pBinarySearchTree, char *cp)
+// void addBig(HashMap *pMap, char *cp)
 // {
 //     for (int i = 0; i < 15; i++)
 //     {
@@ -38,8 +37,8 @@ int main()
 //         big->id = i;
 //         big->str = cp;
 
-//         binarySearchTreeInsert(pBinarySearchTree, big, i);
-//         printf("%s\n", isRedBlackTree(pBinarySearchTree) ? "true" : "false");
+//         binarySearchTreeInsert(pMap, big, i);
+//         printf("%s\n", isRedBlackTree(pMap) ? "true" : "false");
 //     }
 // }
 

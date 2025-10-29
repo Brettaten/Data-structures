@@ -19,8 +19,8 @@ typedef struct HashMap
     void (*freeKey)(void *);
     void *(*copyValue)(void *);
     void (*freeValue)(void *);
-    int64_t *(*hash)(void *, int);
-    bool *(*equals)(void *, void *, int);
+    int64_t (*hash)(void *, int);
+    bool (*equals)(void *, void *, int);
 } HashMap;
 
 typedef struct HashMapNode
@@ -28,6 +28,12 @@ typedef struct HashMapNode
     void *key;
     void *value;
     int64_t hash;
+    int sizeKey;
+    int sizeValue;
+    void *(*copyKey)(void *);
+    void (*freeKey)(void *);
+    void *(*copyValue)(void *);
+    void (*freeValue)(void *);
 } HashMapNode;
 
 /**
@@ -83,15 +89,16 @@ int resizeHashMap(HashMap *pMap);
 /**
  * Function used to create a hash map node
  *
+ * @param pMap pointer to the map
  * @param key pointer to the key
  * @param value pointer to the value
  * @param hash the hash
  *
  * @return Success: pointer to a node | Failure: NULL
  */
-HashMapNode *hashMapCreateNode(void *key, void *value, int64_t hash);
+HashMapNode *hashMapCreateNode(HashMap *pMap, void *key, void *value, int64_t hash);
 
-HashMap *hashMapCreate(int sizeKey, void *(*copyKey)(void *), void (*freeKey)(void *), int sizeValue, void *(*copyValue)(void *), void (*freeValue)(void *), int64_t *(*hash)(void *, int), bool *(*equals)(void *, void *, int))
+HashMap *hashMapCreate(int sizeKey, void *(*copyKey)(void *), void (*freeKey)(void *), int sizeValue, void *(*copyValue)(void *), void (*freeValue)(void *), int64_t (*hash)(void *, int), bool (*equals)(void *, void *, int))
 {
     HashMap *pMap = (HashMap *)malloc(sizeof(HashMap));
 
@@ -167,13 +174,13 @@ void *hashMapGet(HashMap *pMap, void *key)
             {
                 void *value = hashMapNodeGetValue(pMap, temp);
 
-                hashMapNodeFree(pMap, temp);
+                hashMapNodeFree(temp);
                 singlyLinkedListFree(pList);
 
                 return value;
             }
 
-            hashMapNodeFree(pMap, temp);
+            hashMapNodeFree(temp);
         } while ((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
     }
     singlyLinkedListFree(pList);
@@ -202,7 +209,7 @@ int hashMapSet(HashMap *pMap, void *value, void *key)
     int64_t hashCode = hash(pMap, key, pMap->sizeKey);
     int hashValue = hashCode % pMap->length;
 
-    HashMapNode *newNode = hashMapCreateNode(key, value, hashCode);
+    HashMapNode *newNode = hashMapCreateNode(pMap, key, value, hashCode);
 
     SinglyLinkedList *pList = (SinglyLinkedList *)listGet(pMap->list, hashValue);
     SinglyLinkedListNode *pNode = singlyLinkedListGetHead(pList);
@@ -222,18 +229,18 @@ int hashMapSet(HashMap *pMap, void *value, void *key)
                     return -1;
                 }
 
-                hashMapNodeFree(pMap, temp);
-                hashMapNodeFree(pMap, newNode);
+                hashMapNodeFree(temp);
+                hashMapNodeFree(newNode);
                 singlyLinkedListFree(pList);
 
                 return 0;
             }
 
-            hashMapNodeFree(pMap, temp);
+            hashMapNodeFree(temp);
         } while ((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
     }
     singlyLinkedListFree(pList);
-    hashMapNodeFree(pMap, newNode);
+    hashMapNodeFree(newNode);
 
     return -1;
 }
@@ -259,10 +266,10 @@ int hashMapAdd(HashMap *pMap, void *value, void *key)
     int64_t hashCode = hash(pMap, key, pMap->sizeKey);
     int hashValue = hashCode % pMap->length;
 
-    HashMapNode *newNode = hashMapCreateNode(key, value, hashCode);
+    HashMapNode *newNode = hashMapCreateNode(pMap, key, value, hashCode);
 
     int st1 = simpleInsert(pMap, hashValue, newNode);
-    hashMapNodeFree(pMap, newNode);
+    hashMapNodeFree(newNode);
 
     if (st1 == -1)
     {
@@ -319,13 +326,13 @@ int hashMapRemove(HashMap *pMap, void *key)
 
                 pMap->size--;
 
-                hashMapNodeFree(pMap, temp);
+                hashMapNodeFree(temp);
                 singlyLinkedListFree(pList);
 
                 return 0;
             }
 
-            hashMapNodeFree(pMap, temp);
+            hashMapNodeFree(temp);
             counter++;
         } while ((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
     }
@@ -359,8 +366,8 @@ List *hashMapToList(HashMap *pMap)
         {
             HashMapNode *tempNode = (HashMapNode *)singlyLinkedListNodeGet(tempList, pNode);
             listAdd(pList, tempNode);
-            hashMapNodeFree(pMap, tempNode);
-            pNode = singlyLinkedListNodeNext;
+            hashMapNodeFree(tempNode);
+            pNode = singlyLinkedListNodeNext(pNode);
         }
 
         singlyLinkedListFree(tempList);
@@ -566,12 +573,12 @@ int64_t hash(HashMap *pMap, void *value, int size)
     if (pMap == NULL)
     {
         printf("[ERROR] : pMap is null | hash \n");
-        return NULL;
+        return -1;
     }
     if (value == NULL)
     {
         printf("[ERROR] : value is null | hash \n");
-        return NULL;
+        return -1;
     }
 
     if (pMap->hash == NULL)
@@ -580,7 +587,7 @@ int64_t hash(HashMap *pMap, void *value, int size)
 
         int iterations = (size / 8) + 1;
         int pos = 0;
-        int8_t *pValue = (int *)value;
+        int8_t *pValue = (int8_t *)value;
 
         for (int i = 0; i < iterations && i < 16; i++)
         {
@@ -638,13 +645,13 @@ int simpleInsert(HashMap *pMap, int hashValue, HashMapNode *newNode)
             if (equals(pMap, newNode->key, temp->key, pMap->sizeKey))
             {
                 printf("[WARN] : Duplicates are not allowed | hashMapAdd \n");
-                hashMapNodeFree(pMap, temp);
-                hashMapNodeFree(pMap, newNode);
+                hashMapNodeFree(temp);
+                hashMapNodeFree(newNode);
                 singlyLinkedListFree(pList);
                 return -1;
             }
 
-            hashMapNodeFree(pMap, temp);
+            hashMapNodeFree(temp);
 
         } while ((pNode = singlyLinkedListNodeNext(pNode)) != NULL);
 
@@ -726,7 +733,7 @@ int resizeHashMap(HashMap *pMap)
         int hashValue = tempNode->hash % newMap->length;
 
         int st1 = simpleInsert(pMap, hashValue, tempNode);
-        hashMapNodeFree(pMap, tempNode);
+        hashMapNodeFree(tempNode);
 
         if (st1 == -1)
         {
@@ -743,7 +750,7 @@ int resizeHashMap(HashMap *pMap)
     return 0;
 }
 
-HashMapNode *hashMapCreateNode(void *key, void *value, int64_t hash)
+HashMapNode *hashMapCreateNode(HashMap *pMap, void *key, void *value, int64_t hash)
 {
     if (key == NULL)
     {
@@ -768,21 +775,22 @@ HashMapNode *hashMapCreateNode(void *key, void *value, int64_t hash)
     pNode->key = key;
     pNode->value = value;
     pNode->hash = hash;
+    pNode->sizeKey = pMap->sizeKey;
+    pNode->sizeValue = pMap->sizeValue;
+    pNode->copyKey = pMap->copyKey;
+    pNode->freeKey = pMap->freeKey;
+    pNode->copyValue = pMap->copyValue;
+    pNode->freeValue = pMap->freeValue;
 
     return pNode;
 }
 
-HashMapNode *hashMapNodeCopy(HashMap *pMap, HashMapNode *pNode)
+void *hashMapNodeCopy(void *pNode)
 {
-    if (pNode == NULL)
+    HashMapNode *pN = (HashMapNode *)pNode;
+    if (pN == NULL)
     {
         printf("[ERROR] : pNode is null | hashMapNodeCopy \n");
-        return NULL;
-    }
-
-    if (pMap == NULL)
-    {
-        printf("[ERROR] : pMap is null | hashMapNodeCopy \n");
         return NULL;
     }
 
@@ -797,9 +805,9 @@ HashMapNode *hashMapNodeCopy(HashMap *pMap, HashMapNode *pNode)
     void *cK;
     void *cV;
 
-    if (pMap->copyKey == NULL)
+    if (pN->copyKey == NULL)
     {
-        cK = (void *)malloc(pMap->sizeKey);
+        cK = (void *)malloc(pN->sizeKey);
 
         if (cK == NULL)
         {
@@ -807,11 +815,11 @@ HashMapNode *hashMapNodeCopy(HashMap *pMap, HashMapNode *pNode)
             return NULL;
         }
 
-        memcpy(cK, pNode->key, pMap->sizeKey);
+        memcpy(cK, pN->key, pN->sizeKey);
     }
     else
     {
-        cK = pMap->copyKey(pNode->key);
+        cK = pN->copyKey(pN->key);
 
         if (cK == NULL)
         {
@@ -820,9 +828,9 @@ HashMapNode *hashMapNodeCopy(HashMap *pMap, HashMapNode *pNode)
         }
     }
 
-    if (pMap->copyValue == NULL)
+    if (pN->copyValue == NULL)
     {
-        cV = (void *)malloc(pMap->sizeValue);
+        cV = (void *)malloc(pN->sizeValue);
 
         if (cV == NULL)
         {
@@ -830,11 +838,11 @@ HashMapNode *hashMapNodeCopy(HashMap *pMap, HashMapNode *pNode)
             return NULL;
         }
 
-        memcpy(cV, pNode->value, pMap->sizeValue);
+        memcpy(cV, pN->value, pN->sizeValue);
     }
     else
     {
-        cV = pMap->copyValue(pNode->value);
+        cV = pN->copyValue(pN->value);
 
         if (cV == NULL)
         {
@@ -845,46 +853,48 @@ HashMapNode *hashMapNodeCopy(HashMap *pMap, HashMapNode *pNode)
 
     cp->key = cK;
     cp->value = cV;
-    cp->hash = pNode->hash;
+    cp->hash = pN->hash;
+    cp->sizeKey = pN->sizeKey;
+    cp->sizeValue = pN->sizeValue;
+    cp->copyKey = pN->copyKey;
+    cp->freeKey = pN->freeKey;
+    cp->copyValue = pN->copyValue;
+    cp->freeValue = pN->freeValue;
 
     return cp;
 }
 
-void hashMapNodeFree(HashMap *pMap, HashMapNode *pNode)
+void hashMapNodeFree(void *pNode)
 {
-    if (pNode == NULL)
+    HashMapNode *pN = (HashMapNode *)pNode;
+    if (pN == NULL)
     {
         printf("[ERROR] : pNode is null | hashMapNodeCopy \n");
-        return NULL;
+        return;
     }
 
-    if (pMap == NULL)
-    {
-        printf("[ERROR] : pMap is null | hashMapNodeCopy \n");
-        return NULL;
-    }
 
-    if (pMap->freeKey == NULL)
+    if (pN->freeKey == NULL)
     {
-        free(pNode->key);
+        free(pN->key);
     }
     else
     {
-        pMap->freeKey(pNode->key);
+        pN->freeKey(pN->key);
     }
-    if (pMap->freeValue == NULL)
+    if (pN->freeValue == NULL)
     {
-        free(pMap->freeValue);
+        free(pN->freeValue);
     }
     else
     {
-        pMap->freeValue(pNode->value);
+        pN->freeValue(pN->value);
     }
 
-    pNode->key = NULL;
-    pNode->value = NULL;
+    pN->key = NULL;
+    pN->value = NULL;
 
-    free(pNode);
+    free(pN);
 
-    pNode = NULL;
+    pN = NULL;
 }

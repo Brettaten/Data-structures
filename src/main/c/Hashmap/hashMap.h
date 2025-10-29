@@ -1,3 +1,8 @@
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "../List/list.h"
+
 /**
  * Struct that represents a hash map
  *
@@ -25,7 +30,7 @@ typedef struct HashMapNode HashMapNode;
  *
  * @return Success: Pointer to the created hash map | Failure: NULL
  */
-HashMap *hashMapCreate(int sizeKey, void *(*copyKey)(void *), void (*freeKey)(void *), int sizeValue, void *(*copyValue)(void *), void (*freeValue)(void *), int64_t *(*hash)(void *, int), bool *(*equals)(void *, void *, int));
+HashMap *hashMapCreate(int sizeKey, void *(*copyKey)(void *), void (*freeKey)(void *), int sizeValue, void *(*copyValue)(void *), void (*freeValue)(void *), int64_t (*hash)(void *, int), bool (*equals)(void *, void *, int));
 
 /**
  * Function that retrieves the element of the hash map with the passed key
@@ -180,17 +185,15 @@ int64_t hashMapNodeGetHash(HashMapNode *pNode);
 /**
  * Funcion used to create a deep copy of the passed HashMapNode
  *
- * @param pMap the pointer to the hash map
  * @param pNode the pointer to the node
  *
  * @return Success: the deep copy | Failure: NULL
  */
-HashMapNode *hashMapNodeCopy(HashMap *pMap, HashMapNode *pNode);
+void *hashMapNodeCopy(void *pNode);
 
 /**
  * Function used to free the passed HashMapNode
  *
- * @param pMap the pointer to the hash map
  * @param pNode the pointer to the node
  */
-void hashMapNodeFree(HashMap *pMap, HashMapNode *pNode);
+void hashMapNodeFree(void *pNode);
