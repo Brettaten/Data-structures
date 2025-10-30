@@ -32,7 +32,7 @@ bool isIndexInBoundsSingly(SinglyLinkedList *pList, int index);
  * @param pNode the pointer to the node
  *
  * @return Success: the copy of the node | Failure: NULL
- * 
+ *
  * @note The value is deep copied while next is set to null
  */
 SinglyLinkedListNode *singlyLinkedListNodeCopy(SinglyLinkedList *pList, SinglyLinkedListNode *pNode);
@@ -377,16 +377,18 @@ int singlyLinkedListAddIndex(SinglyLinkedList *pList, void *value, int index)
 
 void *singlyLinkedListCopy(void *pList)
 {
-    SinglyLinkedList *cp = (SinglyLinkedList *) pList;
+    SinglyLinkedList *cp = (SinglyLinkedList *)pList;
 
-    if(cp == NULL){
+    if (cp == NULL)
+    {
         printf("[ERROR] : List is null | singlyLinkedListCopy \n");
         return NULL;
     }
 
-    SinglyLinkedList *copy = (SinglyLinkedList *) malloc(sizeof(SinglyLinkedList));
+    SinglyLinkedList *copy = (SinglyLinkedList *)malloc(sizeof(SinglyLinkedList));
 
-    if(copy == NULL){
+    if (copy == NULL)
+    {
         printf("[ERROR] : Memory allocation failed | singlyLinkedListCopy \n");
         return NULL;
     }
@@ -396,21 +398,26 @@ void *singlyLinkedListCopy(void *pList)
     copy->length = cp->length;
     copy->size = cp->size;
 
-    copy->head = singlyLinkedListNodeCopy(cp, cp->head);
+    if (cp->head != NULL)
+    {
+        copy->head = singlyLinkedListNodeCopy(cp, cp->head);
 
-    SinglyLinkedListNode *dest = copy->head;
-    SinglyLinkedListNode *src = cp->head;
+        SinglyLinkedListNode *dest = copy->head;
+        SinglyLinkedListNode *src = cp->head;
 
-    while(src->next != NULL){
-        dest->next = singlyLinkedListNodeCopy(cp, src->next);
+        while (src->next != NULL)
+        {
+            dest->next = singlyLinkedListNodeCopy(cp, src->next);
 
-        if(dest->next == NULL){
-            printf("[ERROR] : Function singlyLinkedListNodeCopy failed | singlyLinkedListCopy \n");
-            return NULL;
+            if (dest->next == NULL)
+            {
+                printf("[ERROR] : Function singlyLinkedListNodeCopy failed | singlyLinkedListCopy \n");
+                return NULL;
+            }
+
+            dest = dest->next;
+            src = src->next;
         }
-
-        dest = dest->next;
-        src = src->next;
     }
     return copy;
 }
@@ -490,7 +497,8 @@ int singlyLinkedListContentSize(SinglyLinkedList *pList)
     return pList->size;
 }
 
-int singlyLinkedListSize(){
+int singlyLinkedListSize()
+{
     return sizeof(SinglyLinkedList);
 }
 
@@ -706,14 +714,16 @@ SinglyLinkedListNode *singlyLinkedListNodeCopy(SinglyLinkedList *pList, SinglyLi
         return NULL;
     }
 
-    if(pNode->value == NULL){
+    if (pNode->value == NULL)
+    {
         printf("[ERROR] : Value is null | singlyLinkedListNodeCopy \n");
         return NULL;
     }
 
-    SinglyLinkedListNode *copy = (SinglyLinkedListNode *) malloc(sizeof(SinglyLinkedListNode));
+    SinglyLinkedListNode *copy = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
 
-    if(copy == NULL){
+    if (copy == NULL)
+    {
         printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeCopy \n");
         return NULL;
     }

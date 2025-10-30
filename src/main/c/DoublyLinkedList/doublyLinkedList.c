@@ -417,29 +417,32 @@ void *doublyLinkedListCopy(void *pList)
     copy->length = cp->length;
     copy->size = cp->size;
 
-    copy->head = doublyLinkedListNodeCopy(cp, cp->head);
-
-    DoublyLinkedListNode *dest = copy->head;
-    DoublyLinkedListNode *src = cp->head;
-
-    while (src->next != NULL)
+    if (cp->head != NULL)
     {
-        dest->next = doublyLinkedListNodeCopy(cp, src->next);
+        copy->head = doublyLinkedListNodeCopy(cp, cp->head);
 
-        if (dest->next == NULL)
+        DoublyLinkedListNode *dest = copy->head;
+        DoublyLinkedListNode *src = cp->head;
+
+        while (src->next != NULL)
         {
-            printf("[ERROR] : Function doublyLinkedListNodeCopy failed | doublyLinkedListCopy \n");
-            return NULL;
+            dest->next = doublyLinkedListNodeCopy(cp, src->next);
+
+            if (dest->next == NULL)
+            {
+                printf("[ERROR] : Function doublyLinkedListNodeCopy failed | doublyLinkedListCopy \n");
+                return NULL;
+            }
+
+            dest->next->prev = dest;
+
+            dest = dest->next;
+            src = src->next;
         }
 
-        dest->next->prev = dest;
-
-        dest = dest->next;
-        src = src->next;
+        copy->tail = dest;
     }
 
-    copy->tail = dest;
-    
     return copy;
 }
 
@@ -536,7 +539,8 @@ int doublyLinkedListContentSize(DoublyLinkedList *pList)
     return pList->size;
 }
 
-int doublyLinkedListSize(){
+int doublyLinkedListSize()
+{
     return sizeof(DoublyLinkedList);
 }
 
@@ -689,7 +693,7 @@ int doublyLinkedListNodeSet(DoublyLinkedList *pList, DoublyLinkedListNode *pNode
 
 void doublyLinkedListFree(void *pList)
 {
-    DoublyLinkedList *cp = (DoublyLinkedList *) pList;
+    DoublyLinkedList *cp = (DoublyLinkedList *)pList;
 
     if (cp == NULL)
     {
@@ -788,14 +792,16 @@ DoublyLinkedListNode *doublyLinkedListNodeCopy(DoublyLinkedList *pList, DoublyLi
         return NULL;
     }
 
-    if(pNode->value == NULL){
+    if (pNode->value == NULL)
+    {
         printf("[ERROR] : Value is null | doublyLinkedListNodeCopy \n");
         return NULL;
     }
 
-    DoublyLinkedListNode *copy = (DoublyLinkedListNode *) malloc(sizeof(DoublyLinkedListNode));
+    DoublyLinkedListNode *copy = (DoublyLinkedListNode *)malloc(sizeof(DoublyLinkedListNode));
 
-    if(copy == NULL){
+    if (copy == NULL)
+    {
         printf("[ERROR] : Memory allocation failed | doublyLinkedListNodeCopy \n");
         return NULL;
     }
@@ -835,15 +841,18 @@ DoublyLinkedListNode *doublyLinkedListNodeCopy(DoublyLinkedList *pList, DoublyLi
 
 void doublyLinkedListFreeNode(DoublyLinkedList *pList, DoublyLinkedListNode *pNode)
 {
-    if(pNode == NULL){
+    if (pNode == NULL)
+    {
         printf("[INFO] : Pointer to node is NULL | doublyLinkedListFreeNode \n");
         return;
     }
 
-    if(pList->freeElement == NULL){
+    if (pList->freeElement == NULL)
+    {
         free(pNode->value);
     }
-    else{
+    else
+    {
         pList->freeElement(pNode->value);
     }
 
