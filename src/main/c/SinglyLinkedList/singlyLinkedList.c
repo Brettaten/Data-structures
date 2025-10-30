@@ -419,6 +419,9 @@ void *singlyLinkedListCopy(void *pList)
             src = src->next;
         }
     }
+    else{
+        copy->head = NULL;
+    }
     return copy;
 }
 

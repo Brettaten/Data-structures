@@ -442,6 +442,11 @@ void *doublyLinkedListCopy(void *pList)
 
         copy->tail = dest;
     }
+    else
+    {
+        copy->head = NULL;
+        copy->tail = NULL;
+    }
 
     return copy;
 }
