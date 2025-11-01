@@ -8,4 +8,5 @@ Just some basic C datastructures, including:
 - stack
 - heap
 - red-black tree
+- hash map
 - string
