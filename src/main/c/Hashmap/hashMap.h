@@ -30,7 +30,7 @@ typedef struct HashMapNode HashMapNode;
  *
  * @return Success: Pointer to the created hash map | Failure: NULL
  */
-HashMap *hashMapCreate(int sizeKey, void *(*copyKey)(void *), void (*freeKey)(void *), int sizeValue, void *(*copyValue)(void *), void (*freeValue)(void *), int64_t (*hash)(void *, int), bool (*equals)(void *, void *, int));
+HashMap *hashMapCreate(int sizeKey, void *(*copyKey)(void *), void (*freeKey)(void *), int sizeValue, void *(*copyValue)(void *), void (*freeValue)(void *), uint64_t (*hash)(void *, int), bool (*equals)(void *, void *, int));
 
 /**
  * Function that retrieves the element of the hash map with the passed key
@@ -180,7 +180,28 @@ void *hashMapNodeGetValue(HashMap *pMap, HashMapNode *pNode);
  * 
  * @return Success: hash | Failure: -1
  */
-int64_t hashMapNodeGetHash(HashMapNode *pNode);
+uint64_t hashMapNodeGetHash(HashMapNode *pNode);
+
+/**
+ * Function used to shallow hash the passed value
+ * 
+ * @param value the pointer to the value
+ * @param size the size of the passed value
+ * 
+ * @return Success: hash | Failure: -1
+ */
+uint64_t hash(void *value, int size);
+
+/**
+ * Function used to shallow compare the passed values
+ * 
+ * @param value1 the pointer to the first value
+ * @param value2 the pointer to the second value
+ * @param size the size of the passed pointers
+ * 
+ * @return Success: hash | Failure: -1
+ */
+bool equals(void *value1, void *value2, int size);
 
 /**
  * Funcion used to create a deep copy of the passed HashMapNode

@@ -106,28 +106,36 @@ void *doublyLinkedListCopy(void *pList)
     copy->length = cp->length;
     copy->size = cp->size;
 
-    copy->head = doublyLinkedListNodeCopy(cp, cp->head);
-
-    DoublyLinkedListNode *dest = copy->head;
-    DoublyLinkedListNode *src = cp->head;
-
-    while (src->next != NULL)
+    if (cp->head != NULL)
     {
-        dest->next = doublyLinkedListNodeCopy(cp, src->next);
+        copy->head = doublyLinkedListNodeCopy(cp, cp->head);
 
-        if (dest->next == NULL)
+        DoublyLinkedListNode *dest = copy->head;
+        DoublyLinkedListNode *src = cp->head;
+
+        while (src->next != NULL)
         {
-            printf("[ERROR] : Function doublyLinkedListNodeCopy failed | doublyLinkedListCopy \n");
-            return NULL;
+            dest->next = doublyLinkedListNodeCopy(cp, src->next);
+
+            if (dest->next == NULL)
+            {
+                printf("[ERROR] : Function doublyLinkedListNodeCopy failed | doublyLinkedListCopy \n");
+                return NULL;
+            }
+
+            dest->next->prev = dest;
+
+            dest = dest->next;
+            src = src->next;
         }
 
-        dest->next->prev = dest;
-
-        dest = dest->next;
-        src = src->next;
+        copy->tail = dest;
+    }
+    else
+    {
+        copy->head = NULL;
+        copy->tail = NULL;
     }
 
-    copy->tail = dest;
-    
     return copy;
 }

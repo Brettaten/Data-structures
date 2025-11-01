@@ -115,15 +115,18 @@ typedef struct DoublyLinkedListNode
 
 void doublyLinkedListFreeNode(DoublyLinkedList *pList, DoublyLinkedListNode *pNode)
 {
-    if(pNode == NULL){
+    if (pNode == NULL)
+    {
         printf("[INFO] : Pointer to node is NULL | doublyLinkedListFreeNode \n");
         return;
     }
 
-    if(pList->freeElement == NULL){
+    if (pList->freeElement == NULL)
+    {
         free(pNode->value);
     }
-    else{
+    else
+    {
         pList->freeElement(pNode->value);
     }
 

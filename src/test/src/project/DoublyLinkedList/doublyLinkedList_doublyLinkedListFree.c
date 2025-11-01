@@ -107,7 +107,7 @@ typedef struct DoublyLinkedListNode
 
 void doublyLinkedListFree(void *pList)
 {
-    DoublyLinkedList *cp = (DoublyLinkedList *) pList;
+    DoublyLinkedList *cp = (DoublyLinkedList *)pList;
 
     if (cp == NULL)
     {

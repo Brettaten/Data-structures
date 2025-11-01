@@ -36,7 +36,7 @@ bool isIndexInBoundsSingly(SinglyLinkedList *pList, int index);
  * @param pNode the pointer to the node
  *
  * @return Success: the copy of the node | Failure: NULL
- * 
+ *
  * @note The value is deep copied while next is set to null
  */
 
@@ -119,14 +119,16 @@ SinglyLinkedListNode *singlyLinkedListNodeCopy(SinglyLinkedList *pList, SinglyLi
         return NULL;
     }
 
-    if(pNode->value == NULL){
+    if (pNode->value == NULL)
+    {
         printf("[ERROR] : Value is null | singlyLinkedListNodeCopy \n");
         return NULL;
     }
 
-    SinglyLinkedListNode *copy = (SinglyLinkedListNode *) malloc(sizeof(SinglyLinkedListNode));
+    SinglyLinkedListNode *copy = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
 
-    if(copy == NULL){
+    if (copy == NULL)
+    {
         printf("[ERROR] : Memory allocation failed | singlyLinkedListNodeCopy \n");
         return NULL;
     }

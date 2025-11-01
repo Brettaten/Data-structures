@@ -36,7 +36,7 @@ bool isIndexInBoundsSingly(SinglyLinkedList *pList, int index);
  * @param pNode the pointer to the node
  *
  * @return Success: the copy of the node | Failure: NULL
- * 
+ *
  * @note The value is deep copied while next is set to null
  */
 
@@ -83,16 +83,18 @@ typedef struct SinglyLinkedListNode
 
 void *singlyLinkedListCopy(void *pList)
 {
-    SinglyLinkedList *cp = (SinglyLinkedList *) pList;
+    SinglyLinkedList *cp = (SinglyLinkedList *)pList;
 
-    if(cp == NULL){
+    if (cp == NULL)
+    {
         printf("[ERROR] : List is null | singlyLinkedListCopy \n");
         return NULL;
     }
 
-    SinglyLinkedList *copy = (SinglyLinkedList *) malloc(sizeof(SinglyLinkedList));
+    SinglyLinkedList *copy = (SinglyLinkedList *)malloc(sizeof(SinglyLinkedList));
 
-    if(copy == NULL){
+    if (copy == NULL)
+    {
         printf("[ERROR] : Memory allocation failed | singlyLinkedListCopy \n");
         return NULL;
     }
@@ -102,21 +104,29 @@ void *singlyLinkedListCopy(void *pList)
     copy->length = cp->length;
     copy->size = cp->size;
 
-    copy->head = singlyLinkedListNodeCopy(cp, cp->head);
+    if (cp->head != NULL)
+    {
+        copy->head = singlyLinkedListNodeCopy(cp, cp->head);
 
-    SinglyLinkedListNode *dest = copy->head;
-    SinglyLinkedListNode *src = cp->head;
+        SinglyLinkedListNode *dest = copy->head;
+        SinglyLinkedListNode *src = cp->head;
 
-    while(src->next != NULL){
-        dest->next = singlyLinkedListNodeCopy(cp, src->next);
+        while (src->next != NULL)
+        {
+            dest->next = singlyLinkedListNodeCopy(cp, src->next);
 
-        if(dest->next == NULL){
-            printf("[ERROR] : Function singlyLinkedListNodeCopy failed | singlyLinkedListCopy \n");
-            return NULL;
+            if (dest->next == NULL)
+            {
+                printf("[ERROR] : Function singlyLinkedListNodeCopy failed | singlyLinkedListCopy \n");
+                return NULL;
+            }
+
+            dest = dest->next;
+            src = src->next;
         }
-
-        dest = dest->next;
-        src = src->next;
+    }
+    else{
+        copy->head = NULL;
     }
     return copy;
 }

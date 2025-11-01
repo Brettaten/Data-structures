@@ -125,14 +125,16 @@ DoublyLinkedListNode *doublyLinkedListNodeCopy(DoublyLinkedList *pList, DoublyLi
         return NULL;
     }
 
-    if(pNode->value == NULL){
+    if (pNode->value == NULL)
+    {
         printf("[ERROR] : Value is null | doublyLinkedListNodeCopy \n");
         return NULL;
     }
 
-    DoublyLinkedListNode *copy = (DoublyLinkedListNode *) malloc(sizeof(DoublyLinkedListNode));
+    DoublyLinkedListNode *copy = (DoublyLinkedListNode *)malloc(sizeof(DoublyLinkedListNode));
 
-    if(copy == NULL){
+    if (copy == NULL)
+    {
         printf("[ERROR] : Memory allocation failed | doublyLinkedListNodeCopy \n");
         return NULL;
     }

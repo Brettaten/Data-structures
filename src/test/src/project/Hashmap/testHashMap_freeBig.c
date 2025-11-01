@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "binarySearchTree.h"
+#include "hashMap.h"
 
 typedef struct BigObj
 {
@@ -11,13 +11,17 @@ typedef struct BigObj
 } BigObj;
 
 
-void add(BinarySearchTree *pBinarySearchTree);
+void add(HashMap *pMap);
 
-void addBig(BinarySearchTree *pBinarySearchTree, char *cp);
+void addBig(HashMap *pMap, char *cp);
 
 void *copyBig(void *big);
 
 void freeBig(void *big);
+
+uint64_t hashBig(void *value, int size);
+
+bool equalsBig(void *value1, void *value2, int size);
 
 
 

@@ -36,7 +36,7 @@ bool isIndexInBoundsSingly(SinglyLinkedList *pList, int index);
  * @param pNode the pointer to the node
  *
  * @return Success: the copy of the node | Failure: NULL
- * 
+ *
  * @note The value is deep copied while next is set to null
  */
 
@@ -89,6 +89,7 @@ typedef struct SinglyLinkedListNode
 
 
 
-int singlyLinkedListSize(){
+int singlyLinkedListSize()
+{
     return sizeof(SinglyLinkedList);
 }

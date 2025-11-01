@@ -91,6 +91,7 @@ typedef struct DoublyLinkedListNode
 
 
 
-int doublyLinkedListSize(){
+int doublyLinkedListSize()
+{
     return sizeof(DoublyLinkedList);
 }
