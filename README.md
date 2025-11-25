@@ -10,3 +10,4 @@ Just some basic C datastructures, including:
 - red-black tree
 - hash map
 - string
+- matrix (under development)
