@@ -51,3 +51,23 @@ Matrix *matrixGetRow(Matrix *pMatrix, int row);
  */
 Matrix *matrixGetCol(Matrix *pMatrix, int col);
 
+/**
+ * Function used to delete the passed row of the passed matrix
+ * 
+ * @param pMatrix pointer to the matrix
+ * @param row the row
+ * 
+ * @return Success: the new matrix | Failure: NULL
+ */
+Matrix *matrixDelRow(Matrix *pMatrix, int row);
+
+/**
+ * Function used to delete the passed column of the passed matrix
+ * 
+ * @param pMatrix pointer to the matrix
+ * @param col the column
+ * 
+ * @return Success: the new matrix | Failure: NULL
+ */
+Matrix *matrixDelCol(Matrix *pMatrix, int col);
+

@@ -77,7 +77,8 @@ float matrixGetElement(Matrix *pMatrix, int row, int col)
 
     int index = matrixGetIndex(pMatrix, row, col);
 
-    if(index == -1){
+    if (index == -1)
+    {
         printf("[ERROR] : function matrixGetIndex failed | matrixGetElement \n");
         return -1.0f;
     }
@@ -117,7 +118,8 @@ Matrix *matrixGetRow(Matrix *pMatrix, int row)
 
     int index = matrixGetIndex(pMatrix, row, 0);
 
-    if(index == -1){
+    if (index == -1)
+    {
         printf("[ERROR] : function matrixGetIndex failed | matrixGetRow \n");
         return NULL;
     }
@@ -168,7 +170,8 @@ Matrix *matrixGetCol(Matrix *pMatrix, int col)
     {
         int index = matrixGetIndex(pMatrix, i, col);
 
-        if(index == -1){
+        if (index == -1)
+        {
             printf("[ERROR] : function matrixGetIndex failed | matrixGetCol \n");
             return NULL;
         }
@@ -179,6 +182,114 @@ Matrix *matrixGetCol(Matrix *pMatrix, int col)
     pNew->data = pCopy;
     pNew->rows = pMatrix->rows;
     pNew->cols = 1;
+
+    return pNew;
+}
+
+Matrix *matrixDelRow(Matrix *pMatrix, int row)
+{
+    if (pMatrix == NULL)
+    {
+        printf("[ERROR] : pMatrix is null | matrixDelRow \n");
+        return NULL;
+    }
+
+    if (row < 0 || row >= pMatrix->rows)
+    {
+        printf("[ERROR] : out of bounds | matrixDelRow \n");
+        return NULL;
+    }
+
+    Matrix *pNew = (Matrix *)malloc(sizeof(Matrix));
+
+    if (pNew == NULL)
+    {
+        printf("[ERROR] : memory allocation failed | matrixDelRow \n");
+        return NULL;
+    }
+
+    float *pCopy = (float *)malloc(sizeof(float) * (pMatrix->cols * (pMatrix->rows - 1)));
+
+    if (pCopy == NULL)
+    {
+        printf("[ERROR] : memory allocation failed | matrixDelRow \n");
+        return NULL;
+    }
+
+    int index1 = 0;
+    int length1 = row * pMatrix->cols;
+    int index2 = (row * pMatrix->cols) + pMatrix->cols;
+    int length2 = (pMatrix->rows - (row + 1)) * pMatrix->cols;
+
+    memcpy(pCopy, pMatrix->data + index1, length1 * sizeof(float));
+
+    if (length2 > 0)
+    {
+        memcpy(pCopy + length1, pMatrix->data + index2, length2 * sizeof(float));
+    }
+
+    pNew->data = pCopy;
+    pNew->rows = pMatrix->rows - 1;
+    pNew->cols = pMatrix->cols;
+
+    return pNew;
+}
+
+Matrix *matrixDelCol(Matrix *pMatrix, int col)
+{
+    if (pMatrix == NULL)
+    {
+        printf("[ERROR] : pMatrix is null | matrixDelCol \n");
+        return NULL;
+    }
+
+    if (col < 0 || col >= pMatrix->cols)
+    {
+        printf("[ERROR] : out of bounds | matrixDelCol \n");
+        return NULL;
+    }
+
+    Matrix *pNew = (Matrix *)malloc(sizeof(Matrix));
+
+    if (pNew == NULL)
+    {
+        printf("[ERROR] : memory allocation failed | matrixDelCol \n");
+        return NULL;
+    }
+
+    float *pCopy = (float *)malloc(sizeof(float) * (pMatrix->rows * (pMatrix->cols - 1)));
+
+    if (pCopy == NULL)
+    {
+        printf("[ERROR] : memory allocation failed | matrixDelCol \n");
+        return NULL;
+    }
+
+    float *pCopyTemp = pCopy;
+
+    memcpy(pCopyTemp, pMatrix->data, sizeof(float) * col);
+    pCopyTemp = pCopyTemp + col;
+
+    int newCols = pMatrix->cols - 1;
+    int initPos = col + 1;
+    int distance = pMatrix->cols;
+
+    int copiedVals = col;
+
+    for(int i = 0; i < pMatrix->rows - 1; i++){
+        memcpy(pCopyTemp, pMatrix->data + initPos + i * distance, sizeof(float) * newCols);
+        pCopyTemp = pCopyTemp + newCols;
+        
+        copiedVals += newCols;
+    }
+
+    int remainingVals = pMatrix->rows * newCols - copiedVals;
+    int lastIndex = pMatrix->rows - 1;
+    memcpy(pCopyTemp, pMatrix->data + initPos + lastIndex * distance, remainingVals);
+
+    pNew->data = pCopy;
+    pNew->rows = pMatrix->rows;
+    pNew->cols = newCols;
 
     return pNew;
 }
