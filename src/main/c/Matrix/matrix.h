@@ -52,12 +52,36 @@ Matrix *matrixGetRow(Matrix *pMatrix, int row);
 Matrix *matrixGetCol(Matrix *pMatrix, int col);
 
 /**
+ * Function used to retrieve the passed rows of the passed matrix
+ *
+ * @param pMatrix pointer to the matrix
+ * @param row1 the first row
+ * @param row2 the second row
+ *
+ * @return Success: the matrix of the row vectors | Failure: NULL
+ */
+Matrix *matrixGetRows(Matrix *pMatrix, int row1, int row2);
+
+/**
+ * Function used to retrieve the passed columns of the passed matrix
+ *
+ * @param pMatrix pointer to the matrix
+ * @param col1 the first column
+ * @param col2 the second column
+ *
+ * @return Success: the matrix of the column vectors | Failure: NULL
+ * 
+ * @note Retrieving a column is slower than retrieving a row
+ */
+Matrix *matrixGetCols(Matrix *pMatrix, int col1, int col2);
+
+/**
  * Function used to delete the passed row of the passed matrix
  * 
  * @param pMatrix pointer to the matrix
  * @param row the row
  * 
- * @return Success: the new matrix | Failure: NULL
+ * @return Success: the matrix without the row | Failure: NULL
  */
 Matrix *matrixDelRow(Matrix *pMatrix, int row);
 
@@ -67,7 +91,48 @@ Matrix *matrixDelRow(Matrix *pMatrix, int row);
  * @param pMatrix pointer to the matrix
  * @param col the column
  * 
- * @return Success: the new matrix | Failure: NULL
+ * @return Success: the matrix without the column | Failure: NULL
+ * 
+ * @note Deleting a column is slower than deleting a row
  */
 Matrix *matrixDelCol(Matrix *pMatrix, int col);
+
+/**
+ * Function used to delete the passed rows of the passed matrix
+ * 
+ * @param pMatrix pointer to the matrix
+ * @param row1 the first row
+ * @param row2 the second row
+ * 
+ * @return Success: the matrix without the rows | Failure: NULL
+ */
+Matrix *matrixDelRows(Matrix *pMatrix, int row1, int row2);
+
+/**
+ * Function used to delete the passed columns of the passed matrix
+ * 
+ * @param pMatrix pointer to the matrix
+ * @param col1 the first column
+ * @param col2 the second column
+ * 
+ * @return Success: the matrix without the columns | Failure: NULL
+ * 
+ * @note Deleting a column is slower than deleting a row
+ */
+Matrix *matrixDelCols(Matrix *pMatrix, int col1, int col2);
+
+/**
+ * Function used to create the adjoint of the passed matrix
+ * 
+ * @param pMatrix pointer to the matrix
+ * @param row the row that should be deleted
+ * @param col the col that should be deleted
+ * 
+ * @return Success: the new matrix | Failure: NULL
+ */
+Matrix *matrixAdjoint(Matrix *pMatrix, int row, int col);
+
+Matrix *matrixTranspose(Matrix *pMatrix);
+
+
 
