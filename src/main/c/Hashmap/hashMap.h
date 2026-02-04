@@ -141,7 +141,7 @@ void *hashMapCopy(void *pMap);
 /**
  * Function used to free the passed hash map
  *
- * @param pList pointer to the hash map
+ * @param pMap pointer to the hash map
  * 
  * @note Void datatypes are used for this function because one might
  *      store this struct inside this struct and thus function pointers
