@@ -368,13 +368,22 @@ Matrix *matrixGauss(Matrix *a, Matrix *b);
 Matrix *matrixInverse(Matrix *a);
 
 /**
- * Function used to compute the rank of a Matrix
+ * Function used to compute the rank of a matrix
  * 
  * @param a the matrix a
  * 
  * @return Success: the rank | Failure: -1
  */
 int matrixRank(Matrix *a);
+
+/**
+ * Function used to determine whether a matrix is invertible / nonsingular
+ * 
+ * @param a the matrix a
+ * 
+ * @return true if invertible, otherwise false
+ */
+bool matrixIsInvertible(Matrix *a);
 
 /**
  * Function used to perform a matrix multiplication

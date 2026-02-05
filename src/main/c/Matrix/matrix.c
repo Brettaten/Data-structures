@@ -1067,7 +1067,70 @@ int matrixRank(Matrix * a)
         }
     }
 
+    matrixFree(copyA);
+
     return rowCounter;
+}
+
+bool matrixIsInvertible(Matrix * a)
+{
+    if (a == NULL)
+    {
+        printf("[ERROR] : m is null | matrixGauss \n");
+        return NULL;
+    }
+
+    int rowsA = matrixRows(a);
+    int colsA = matrixCols(a);
+
+
+    Matrix *copyA = matrixCopy(a);
+
+    int rowCounter = 0;
+
+    for (int c = 0; c < colsA; c++)
+    {
+
+        float pValue = 0.0f;
+        int row = 0;
+
+        for (int r = rowCounter; r < rowsA; r++)
+        {
+            float value = matrixGetElement(copyA, r, c);
+
+            if (pValue == 0.0f)
+            {
+                pValue = value;
+
+                if (pValue == 0.0f)
+                {
+                    continue;
+                }
+                row = r;
+                rowCounter++;
+            }
+            else if (value != 0)
+            {
+                float factor = -(value / pValue);
+                matrixAddRows(copyA, r, row, factor);
+            }
+        }
+        if (pValue == 0.0f)
+        {
+            return false;
+        }
+        if (pValue != 0.0f && row != (rowCounter - 1))
+        {
+            matrixSwapRows(copyA, row, rowCounter - 1);
+        }
+    }
+
+    matrixFree(copyA);
+
+    if(rowCounter == rowsA){
+        return true;
+    }
+    return false;
 }
 
 Matrix *matrixMult(Matrix *pMatrix1, Matrix *pMatrix2)
