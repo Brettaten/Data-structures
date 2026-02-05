@@ -368,6 +368,15 @@ Matrix *matrixGauss(Matrix *a, Matrix *b);
 Matrix *matrixInverse(Matrix *a);
 
 /**
+ * Function used to compute the rank of a Matrix
+ * 
+ * @param a the matrix a
+ * 
+ * @return Success: the rank | Failure: -1
+ */
+int matrixRank(Matrix *a);
+
+/**
  * Function used to perform a matrix multiplication
  * 
  * @param pMatrix1 the first matrix

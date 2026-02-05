@@ -1020,6 +1020,56 @@ Matrix * matrixInverse(Matrix * a)
     return inverse;
 }
 
+int matrixRank(Matrix * a)
+{
+    if(a == NULL){
+        printf("[ERROR] : matrix is null | matrixRank \n");
+        return -1;
+    }
+
+    int rowsA = matrixRows(a);
+    int colsA = matrixCols(a);
+
+    Matrix *copyA = matrixCopy(a);
+
+    int rowCounter = 0;
+
+    for (int c = 0; c < colsA; c++)
+    {
+
+        float pValue = 0.0f;
+        int row = 0;
+
+        for (int r = rowCounter; r < rowsA; r++)
+        {
+            float value = matrixGetElement(copyA, r, c);
+
+            if (pValue == 0.0f)
+            {
+                pValue = value;
+
+                if (pValue == 0.0f)
+                {
+                    continue;
+                }
+                row = r;
+                rowCounter++;
+            }
+            else if (value != 0)
+            {
+                float factor = -(value / pValue);
+                matrixAddRows(copyA, r, row, factor);
+            }
+        }
+        if (pValue != 0.0f && row != (rowCounter - 1))
+        {
+            matrixSwapRows(copyA, row, rowCounter - 1);
+        }
+    }
+
+    return rowCounter;
+}
+
 Matrix *matrixMult(Matrix *pMatrix1, Matrix *pMatrix2)
 {
     if (pMatrix1 == NULL || pMatrix2 == NULL)
