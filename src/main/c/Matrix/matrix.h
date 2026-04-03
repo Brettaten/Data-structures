@@ -359,6 +359,36 @@ Matrix *matrixScalarMult(Matrix *pMatrix, float scalar);
 Matrix *matrixGauss(Matrix *a, Matrix *b);
 
 /**
+ * Function used to return the particular solution for systems with infinitely many solutions.
+ * Use the kernel function for the complete solution set
+ * If the system has just one solution, this one will be returned.
+ * 
+ * @param a the matrix A
+ * @param b the matrix b, pass NULL for a zero matrix
+ *
+ * @return Success: the particular solution of Ax=b | Failure: NULL
+ */
+Matrix *matrixParticularSolution(Matrix *a, Matrix *b);
+
+/**
+ * Function used to compute the kernel of a matrix
+ * 
+ * @param a the matrix A
+ * 
+ * @return Success: the kernel | Failure: Null
+ */
+Matrix *matrixKernel(Matrix *a);
+
+/**
+ * Function used to compute a basis of the passed matrix
+ * 
+ * @param a the matrix A
+ * 
+ * @return Success: the basis | Failure: Null
+ */
+Matrix *matrixBasis(Matrix *a);
+
+/**
  * Function used to compute the inverse of a nonsingular matrix
  * 
  * @param a the matrix A
@@ -384,6 +414,34 @@ int matrixRank(Matrix *a);
  * @return true if invertible, otherwise false
  */
 bool matrixIsInvertible(Matrix *a);
+
+/**
+ * Function used to determine whether the row vectors are linearly independent
+ * 
+ * @param a the matrix a
+ * 
+ * @return true if independent, otherwise false
+ */
+bool matrixLinIndependentRows(Matrix *a);
+
+/**
+ * Function used to determine whether the column vectors are linearly independent
+ * 
+ * @param a the matrix a
+ * 
+ * @return true if independent, otherwise false
+ */
+bool matrixLinIndependentCols(Matrix *a);
+
+/**
+ * Function used to determine whether a matrix is a basis of another matrix
+ * 
+ * @param pMatrix the matrix
+ * @param base the potential basis
+ * 
+ * @return true if basis, otherwise false
+ */
+bool matrixIsBasis(Matrix *pMatrix, Matrix *basis);
 
 /**
  * Function used to perform a matrix multiplication

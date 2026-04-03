@@ -287,7 +287,7 @@ Matrix *matrixCreateValue(int rows, int cols, float value)
     return pMatrix;
 }
 
-Matrix * matrixCreateIdentity(int size)
+Matrix *matrixCreateIdentity(int size)
 {
     Matrix *pMatrix = (Matrix *)malloc(sizeof(Matrix));
 
@@ -310,14 +310,17 @@ Matrix * matrixCreateIdentity(int size)
     {
         c++;
 
-        if(c == size){
+        if (c == size)
+        {
             c = 0;
             r++;
         }
-        if(r == c){
+        if (r == c)
+        {
             pCopy[i] = 1;
         }
-        else{
+        else
+        {
             pCopy[i] = 0;
         }
     }
@@ -974,14 +977,16 @@ Matrix *matrixGauss(Matrix *a, Matrix *b)
                 matrixAddRows(copyB, k, i, factor);
             }
         }
-        matrixScaleRow(copyA, i, 1/pValue);
+        matrixScaleRow(copyA, i, 1 / pValue);
 
-        if(copyB != NULL){
-            matrixScaleRow(copyB, i, 1/pValue);
+        if (copyB != NULL)
+        {
+            matrixScaleRow(copyB, i, 1 / pValue);
         }
     }
 
-    if(rowCounter == rowsA){
+    if (rowCounter == rowsA)
+    {
         matrixFree(copyA);
         return copyB;
     }
@@ -994,14 +999,119 @@ Matrix *matrixGauss(Matrix *a, Matrix *b)
     return result;
 }
 
-Matrix * matrixInverse(Matrix * a)
+Matrix * matrixParticularSolution(Matrix * a, Matrix * b)
+{
+return NULL;
+}
+
+Matrix * matrixKernel(Matrix * a)
 {
     if(a == NULL){
+        printf("[ERROR] : matrix is null | matrixKernel \n");
+        return NULL;
+    }
+
+    int rowsA = matrixRows(a);
+    int colsA = matrixCols(a);
+
+    Matrix *copyA = matrixCopy(a);
+
+    int rowCounter = 0;
+
+    for (int c = 0; c < colsA; c++)
+    {
+        float pValue = 0.0f;
+        int row = 0;
+
+        for (int r = rowCounter; r < rowsA; r++)
+        {
+            float value = matrixGetElement(copyA, r, c);
+
+            if (pValue == 0.0f)
+            {
+                pValue = value;
+
+                if (pValue == 0.0f)
+                {
+                    continue;
+                }
+                row = r;
+                rowCounter++;
+            }
+            else if (value != 0)
+            {
+                float factor = -(value / pValue);
+                matrixAddRows(copyA, r, row, factor);
+            }
+        }
+
+        if (pValue != 0.0f && row != (rowCounter - 1))
+        {
+            matrixSwapRows(copyA, row, rowCounter - 1);
+        }
+    }
+
+    if(rowCounter == colsA){
+        matrixFree(copyA);
+        return matrixCreateValue(colsA, colsA, 0.0f);
+    }
+
+    for (int i = 0, j = 0; i <= rowCounter - 1, j <= colsA - 1; j++)
+    {
+        float pValue = matrixGetElement(copyA, i, j);
+
+        if(pValue == 0.0f){
+            continue;
+        }
+
+        i++;
+
+        for (int k = i - 1; k >= 0; k--)
+        {
+            float value = matrixGetElement(copyA, k, j);
+
+            float factor = -(value / pValue);
+            matrixAddRows(copyA, k, i, factor);
+        }
+        matrixScaleRow(copyA, i, 1 / pValue);
+    }
+
+    Matrix *result = matrixCreate(NULL, colsA, colsA - rowCounter);
+
+    // if (rowCounter == rowsA)
+    // {
+    //     matrixFree(copyA);
+    //     return copyB;
+    // }
+
+    // Matrix *result = matrixDelRows(copyB, rowCounter, rowsB - 1);
+
+    // matrixFree(copyA);
+    // matrixFree(copyB);
+
+    return result;
+}
+
+Matrix * matrixBasis(Matrix * a)
+{
+    if(a == NULL){
+        printf("[ERROR] : matrix is null | matrixBasis \n");
+        return NULL;
+    }
+
+
+}
+
+Matrix *matrixInverse(Matrix *a)
+{
+    if (a == NULL)
+    {
         printf("[ERROR] : matrix is null | matrixInverse \n");
         return NULL;
     }
 
-    if(a->cols != a->rows){
+    if (a->cols != a->rows)
+    {
         printf("[INFO] : matrix is not square | matrixInverse \n");
         return NULL;
     }
@@ -1012,7 +1122,8 @@ Matrix * matrixInverse(Matrix * a)
 
     matrixFree(identity);
 
-    if(inverse == NULL){
+    if (inverse == NULL)
+    {
         printf("[INFO] : matrix is not nonsingular | matrixInverse \n");
         return NULL;
     }
@@ -1020,9 +1131,10 @@ Matrix * matrixInverse(Matrix * a)
     return inverse;
 }
 
-int matrixRank(Matrix * a)
+int matrixRank(Matrix *a)
 {
-    if(a == NULL){
+    if (a == NULL)
+    {
         printf("[ERROR] : matrix is null | matrixRank \n");
         return -1;
     }
@@ -1072,7 +1184,7 @@ int matrixRank(Matrix * a)
     return rowCounter;
 }
 
-bool matrixIsInvertible(Matrix * a)
+bool matrixIsInvertible(Matrix *a)
 {
     if (a == NULL)
     {
@@ -1082,7 +1194,6 @@ bool matrixIsInvertible(Matrix * a)
 
     int rowsA = matrixRows(a);
     int colsA = matrixCols(a);
-
 
     Matrix *copyA = matrixCopy(a);
 
@@ -1127,7 +1238,75 @@ bool matrixIsInvertible(Matrix * a)
 
     matrixFree(copyA);
 
-    if(rowCounter == rowsA){
+    if (rowCounter == rowsA)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool matrixLinIndependentRows(Matrix *a)
+{
+    if (a == NULL)
+    {
+        printf("[ERROR] : matrix is null | matrixLinIndependentRows \n");
+        return false;
+    }
+
+    int rank = matrixRank(a);
+
+    if (rank == -1)
+    {
+        printf("[ERROR] : function matrixRank failed | matrixLinIndependentRows \n");
+        return false;
+    }
+
+    if (rank == matrixRows(a))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool matrixLinIndependentCols(Matrix *a)
+{
+    if (a == NULL)
+    {
+        printf("[ERROR] : matrix is null | matrixLinIndependentCols \n");
+        return false;
+    }
+
+    int rank = matrixRank(a);
+
+    if (rank == -1)
+    {
+        printf("[ERROR] : function matrixRank failed | matrixLinIndependentCols \n");
+        return false;
+    }
+
+    if (rank == matrixCols(a))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool matrixIsBasis(Matrix * pMatrix, Matrix * basis)
+{
+    if (pMatrix == NULL){
+        printf("[ERROR] : matrix is null | matrixIsBasis \n");
+        return false;
+    }
+
+    int rankM = matrixRank(pMatrix);
+    int rankB = matrixRank(basis);
+
+    if(rankB == -1 || rankM == -1){
+        printf("[ERROR] : function matrixRank failed | \n");
+        return false;
+    }
+
+    if (rankB == rankM && rankB == matrixCols(basis)){
         return true;
     }
     return false;
