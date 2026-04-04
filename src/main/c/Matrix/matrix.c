@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #include "matrix.h"
 
@@ -289,6 +290,11 @@ Matrix *matrixCreateValue(int rows, int cols, float value)
 
 Matrix *matrixCreateIdentity(int size)
 {
+    if (size < 1)
+    {
+        printf("[ERROR] : the matrix has to have atleast one column and one row | matrixCreateIdentity \n");
+        return NULL;
+    }
     Matrix *pMatrix = (Matrix *)malloc(sizeof(Matrix));
 
     if (pMatrix == NULL)
@@ -346,6 +352,12 @@ Matrix *matrixCreateRandom(int rows, int cols, float lowerBound, float upperBoun
     if (lowerBound > upperBound)
     {
         printf("[ERROR] : the lower bound can not be greater than the upper bound | matrixCreateRandom \n");
+        return NULL;
+    }
+
+    if (isInteger && ceilf(lowerBound) == ceilf(upperBound) && (ceilf(lowerBound) != lowerBound || ceilf(upperBound) != upperBound)) {
+
+        printf("[ERROR] : no integer in range | matrixCreateRandom \n");
         return NULL;
     }
 
