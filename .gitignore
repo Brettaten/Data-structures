@@ -3,3 +3,12 @@
 
 .vscode/*
 .VSCodeCounter/*
+
+target/debug/*
+target/prod/*
+tests/
+
+src/test/src/main/genTests/*
+src/test/src/project/*
+src/test/target/project/*
+src/test/target/test/*
